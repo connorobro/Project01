@@ -11,6 +11,9 @@ export default function Index() {
       <Link href={"/savedJobs"} style={styles.button}>
         Saved Jobs
       </Link>
+      <Link href={"/jobs"} style={styles.button}>
+        Job
+      </Link>
     </View>
   );
 }
