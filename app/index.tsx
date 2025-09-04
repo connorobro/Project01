@@ -1,21 +1,7 @@
-import { Link } from "expo-router";
-import { StyleSheet, Text, View } from "react-native";
-
+import { Redirect } from "expo-router";
+import { StyleSheet } from "react-native";
 export default function Index() {
-  return (
-    <View style={styles.container}>
-      <Text style={styles.text}>Hello React</Text>
-      <Link href={"/Home"} style={styles.button}>
-        Home
-      </Link>
-      <Link href={"/savedJobs"} style={styles.button}>
-        Saved Jobs
-      </Link>
-      <Link href={"/jobs"} style={styles.button}>
-        Job
-      </Link>
-    </View>
-  );
+  return <Redirect href="/Launch" />;
 }
 const styles = StyleSheet.create({
   container: {

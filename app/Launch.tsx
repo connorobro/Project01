@@ -19,5 +19,6 @@ export default function Launch() {
         <Text>Register</Text>
       </TouchableOpacity>
     </SafeAreaProvider>
+
   );
 }
