@@ -6,7 +6,10 @@ export default function Index() {
     <View style={styles.container}>
       <Text style={styles.text}>Hello React</Text>
       <Link href={"/Home"} style={styles.button}>
-        Go to Home Screen
+        Home
+      </Link>
+      <Link href={"/savedJobs"} style={styles.button}>
+        Saved Jobs
       </Link>
     </View>
   );
