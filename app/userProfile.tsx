@@ -3,7 +3,7 @@ import { StyleSheet, Text, View } from "react-native";
 export default function userProfileScreen() {
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>User Profile screen</Text>
+      <Text style={styles.text}>User Profile</Text>
     </View>
   );
 }
