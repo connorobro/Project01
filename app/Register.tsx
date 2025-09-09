@@ -18,7 +18,7 @@ export default function Register() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [feedback, setFeedback] = useState('');
-  const router = useRouter();
+  const router = useRouter();   
 
   const handleRegister = async () => {
     setFeedback('');
@@ -86,7 +86,7 @@ export default function Register() {
     >
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.formContainer}>
-          <Text style={styles.title}>Create Account</Text>
+          <Text style={styles.title}>Create Accout</Text>
           
           <TextInput
             style={styles.input}

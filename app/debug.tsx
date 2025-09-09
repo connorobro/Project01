@@ -7,6 +7,7 @@ export default function Debug() {
   const [data, setData] = useState<{ [key: string]: any }>({});
   const [loading, setLoading] = useState(true);
 
+  
   const loadData = async () => {
     setLoading(true);
     try {
