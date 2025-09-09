@@ -2,7 +2,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
-    Alert,
     KeyboardAvoidingView,
     Platform,
     ScrollView,
@@ -17,41 +16,44 @@ export default function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [feedback, setFeedback] = useState('');
   const router = useRouter();
 
   const handleLogin = async () => {
+    setFeedback('');
+
     if (!username.trim() || !password.trim()) {
-      Alert.alert('Error', 'Please fill in all fields');
+      setFeedback('Please fill in all fields');
       return;
     }
 
     setLoading(true);
+    setFeedback('Logging in...');
 
     try {
-      // Get users from storage
       const existingUsers = await AsyncStorage.getItem('users');
       const users = existingUsers ? JSON.parse(existingUsers) : [];
 
-      // Find user by username or email
       const user = users.find((u: any) => 
-        (u.username === username || u.email === username) && u.password === password
+        u.username === username && u.password === password
       );
 
       if (user) {
-        // Login successful
         await AsyncStorage.setItem('currentUser', JSON.stringify(user));
         await AsyncStorage.setItem('isLoggedIn', 'true');
         
-        Alert.alert('Success', 'Login successful!', [
-          { text: 'OK', onPress: () => router.replace('/Home') }
-        ]);
+        setFeedback('Login successful! Welcome back!');
+        
+        setTimeout(() => {
+          router.replace('/Home');
+        }, 1500);
       } else {
-        Alert.alert('Error', 'Invalid username/email or password');
+        setFeedback('Invalid username or password');
       }
 
     } catch (error) {
       console.error('Login error:', error);
-      Alert.alert('Error', 'Failed to login. Please try again.');
+      setFeedback('Failed to login. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -68,7 +70,7 @@ export default function Login() {
           
           <TextInput
             style={styles.input}
-            placeholder="Username or Email"
+            placeholder="Username"
             placeholderTextColor="#999"
             value={username}
             onChangeText={setUsername}
@@ -84,6 +86,17 @@ export default function Login() {
             secureTextEntry
           />
 
+          {feedback ? (
+            <View style={[
+              styles.feedbackContainer, 
+              feedback.includes('successful') || feedback.includes('Welcome') 
+                ? styles.successFeedback 
+                : styles.errorFeedback
+            ]}>
+              <Text style={styles.feedbackText}>{feedback}</Text>
+            </View>
+          ) : null}
+
           <TouchableOpacity 
             style={[styles.button, loading && styles.buttonDisabled]}
             onPress={handleLogin}
@@ -96,7 +109,7 @@ export default function Login() {
 
           <TouchableOpacity 
             style={styles.linkButton}
-            onPress={() => router.push('./Register')}
+            onPress={() => router.push('/Register')}
           >
             <Text style={styles.linkText}>
               Don't have an account? Register here
@@ -138,6 +151,23 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginBottom: 15,
     fontSize: 16,
+  },
+  feedbackContainer: {
+    padding: 12,
+    borderRadius: 8,
+    marginBottom: 15,
+  },
+  successFeedback: {
+    backgroundColor: '#4CAF50',
+  },
+  errorFeedback: {
+    backgroundColor: '#FF3B30',
+  },
+  feedbackText: {
+    color: '#fff',
+    textAlign: 'center',
+    fontSize: 14,
+    fontWeight: '500',
   },
   button: {
     backgroundColor: '#007AFF',

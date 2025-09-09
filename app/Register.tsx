@@ -2,7 +2,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
-    Alert,
     KeyboardAvoidingView,
     Platform,
     ScrollView,
@@ -15,70 +14,66 @@ import {
 
 export default function Register() {
   const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [feedback, setFeedback] = useState('');
   const router = useRouter();
 
   const handleRegister = async () => {
-    // Basic validation
-    if (!username.trim() || !email.trim() || !password.trim()) {
-      Alert.alert('Error', 'Please fill in all fields');
+    setFeedback('');
+
+    if (!username.trim() || !password.trim()) {
+      setFeedback('Please fill in all fields');
       return;
     }
 
     if (password !== confirmPassword) {
-      Alert.alert('Error', 'Passwords do not match');
+      setFeedback('Passwords do not match');
       return;
     }
 
     if (password.length < 6) {
-      Alert.alert('Error', 'Password must be at least 6 characters');
+      setFeedback('Password must be at least 6 characters');
       return;
     }
 
     setLoading(true);
+    setFeedback('Creating account...');
 
     try {
-      // Check if user already exists
       const existingUsers = await AsyncStorage.getItem('users');
       const users = existingUsers ? JSON.parse(existingUsers) : [];
       
-      const userExists = users.find((user: any) => 
-        user.username === username || user.email === email
-      );
+      const userExists = users.find((user: any) => user.username === username);
 
       if (userExists) {
-        Alert.alert('Error', 'User with this username or email already exists');
+        setFeedback('Username already exists');
         setLoading(false);
         return;
       }
 
-      // Create new user
       const newUser = {
         id: Date.now().toString(),
         username,
-        email,
-        password, // In production, this should be hashed
+        password,
         createdAt: new Date().toISOString()
       };
 
-      // Add user to users array
       users.push(newUser);
       await AsyncStorage.setItem('users', JSON.stringify(users));
-
-      // Auto-login the user
       await AsyncStorage.setItem('currentUser', JSON.stringify(newUser));
       await AsyncStorage.setItem('isLoggedIn', 'true');
 
-      Alert.alert('Success', 'Account created successfully!', [
-        { text: 'OK', onPress: () => router.replace('/Home') }
-      ]);
+      setFeedback('Account created successfully! Redirecting...');
+      
+      setTimeout(() => {
+        router.replace('/Home');
+      }, 1500);
 
     } catch (error) {
       console.error('Registration error:', error);
-      Alert.alert('Error', 'Failed to create account. Please try again.');
+      setFeedback('Failed to create account. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -104,16 +99,6 @@ export default function Register() {
 
           <TextInput
             style={styles.input}
-            placeholder="Email"
-            placeholderTextColor="#999"
-            value={email}
-            onChangeText={setEmail}
-            keyboardType="email-address"
-            autoCapitalize="none"
-          />
-
-          <TextInput
-            style={styles.input}
             placeholder="Password"
             placeholderTextColor="#999"
             value={password}
@@ -130,6 +115,15 @@ export default function Register() {
             secureTextEntry
           />
 
+          {feedback ? (
+            <View style={[
+              styles.feedbackContainer, 
+              feedback.includes('successfully') ? styles.successFeedback : styles.errorFeedback
+            ]}>
+              <Text style={styles.feedbackText}>{feedback}</Text>
+            </View>
+          ) : null}
+
           <TouchableOpacity 
             style={[styles.button, loading && styles.buttonDisabled]}
             onPress={handleRegister}
@@ -142,7 +136,7 @@ export default function Register() {
 
           <TouchableOpacity 
             style={styles.linkButton}
-            onPress={() => router.push('./Login')}
+            onPress={() => router.push('/Login')}
           >
             <Text style={styles.linkText}>
               Already have an account? Login here
@@ -184,6 +178,23 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginBottom: 15,
     fontSize: 16,
+  },
+  feedbackContainer: {
+    padding: 12,
+    borderRadius: 8,
+    marginBottom: 15,
+  },
+  successFeedback: {
+    backgroundColor: '#4CAF50',
+  },
+  errorFeedback: {
+    backgroundColor: '#FF3B30',
+  },
+  feedbackText: {
+    color: '#fff',
+    textAlign: 'center',
+    fontSize: 14,
+    fontWeight: '500',
   },
   button: {
     backgroundColor: '#007AFF',
