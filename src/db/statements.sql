@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS jobs (
   job_id TEXT PRIMARY KEY,
   title TEXT,
   company TEXT
-);
+); 
 
 CREATE TABLE IF NOT EXISTS saved_jobs (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
