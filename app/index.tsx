@@ -20,6 +20,9 @@ export default function Index() {
       <Link href={"/jobs"} style={styles.button}>
         Job
       </Link>
+      <Link href={"/debug"} style={styles.button}>
+        View Database
+      </Link>
     </View>
   );
 }
