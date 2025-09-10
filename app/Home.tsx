@@ -1,6 +1,7 @@
 import { Link, useRouter } from "expo-router";
 import * as React from "react";
 import { StyleSheet, Text, View } from "react-native";
+import "react-native-dotenv";
 import { Dropdown } from "react-native-element-dropdown";
 import { Button, Menu, Provider } from "react-native-paper";
 
@@ -15,12 +16,9 @@ const DropdownCategory = ({
   const [isFocus, setIsFocus] = React.useState(false);
   const [data, setData] = React.useState([]);
 
-  const APIKEY = "wong";
-  const APPID = "0";
-
   React.useEffect(() => {
     fetch(
-      `https://api.adzuna.com/v1/api/jobs/us/categories?app_id=${APPID}&app_key=${APIKEY}`
+      `https://api.adzuna.com/v1/api/jobs/us/categories?app_id=${process.env.EXPO_PUBLIC_ADZUNA_APP_ID}&app_key=${process.env.EXPO_PUBLIC_ADZUNA_API_KEY}`
     )
       .then((response) => response.json())
       .then((data) => {
