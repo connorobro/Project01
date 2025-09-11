@@ -2,7 +2,6 @@ import { Link, useRouter } from "expo-router";
 import * as React from "react";
 import { useContext } from "react";
 import { StyleSheet, Text, View } from "react-native";
-import "react-native-dotenv";
 import { Dropdown } from "react-native-element-dropdown";
 import { Button, Menu, Provider } from "react-native-paper";
 import { AuthContext } from "../context/AuthProvider";
