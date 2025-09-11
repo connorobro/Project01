@@ -11,15 +11,15 @@ export default function Index() {
       <Link href={"./Login"} style={styles.button}>
         Login
       </Link>
-      <Link href={"/Home"} style={styles.button}>
+      {/* <Link href={"/Home"} style={styles.button}>
         Home
-      </Link>
-      <Link href={"/savedJobs"} style={styles.button}>
+      </Link> */}
+      {/* <Link href={"/savedJobs"} style={styles.button}>
         Saved Jobs
-      </Link>
-      <Link href={"/jobs"} style={styles.button}>
+      </Link> */}
+      {/* <Link href={"/jobs"} style={styles.button}>
         Job
-      </Link>
+      </Link> */}
       <Link href={"/debug"} style={styles.button}>
         View Database
       </Link>
