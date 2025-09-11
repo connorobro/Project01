@@ -69,26 +69,16 @@ export default function HomeScreen() {
   const [category, setCategory] = React.useState<string | null>(null);
   const openMenu = () => setMenuVisible(true);
   const closeMenu = () => setMenuVisible(false);
+
   const { userToken, username, logout } = useContext(AuthContext);
   const router = useRouter();
 
   // Early return for unauthenticated users
-  if (!userToken) {
-    router.replace("/Login");
-    return null;
-  }
-
-  // const [mounted, setMounted] = React.useState(false);
-
-  // React.useEffect(() => {
-  //   setMounted(true);
-  // }, []);
-
-  // React.useEffect(() => {
-  //   if (mounted && !userToken) {
-  //     router.replace("/Login");
-  //   }
-  // }, [mounted, userToken, router]);
+  React.useEffect(() => {
+    if (!userToken) {
+      router.replace("/Login");
+    }
+  }, [userToken, router]);
 
   return (
     <Provider>

@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from "@testing-library/react-native";
 import { router } from "expo-router";
 import React from "react";
-import Jobs from "./jobs";
+import Jobs from "../app/jobs";
 
 jest.mock("expo-router", () => {
   const push = jest.fn();
