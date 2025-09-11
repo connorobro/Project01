@@ -1,10 +1,10 @@
 import { Link } from "expo-router";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 
 export default function Index() {
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Hello React</Text>
+      {/* <Text style={styles.text}>Hello React</Text> */}
       <Link href="./Register" style={styles.button}>
         Register
       </Link>
@@ -29,16 +29,39 @@ export default function Index() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    // flexDirection:'row', 
+    gap: '15px',
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#25292e",
+    
   },
   text: {
-    color: "white",
+    // color: "white",
+    // fontSize: 24,
+    fontWeight: "bold",
+    color: "#fff",
+    textAlign: "center",
+    fontSize: 16,
+    // fontWeight: "bold",
+  },
+  buttonText: {
+    color: "#fff",
+    textAlign: "center",
+    fontSize: 16,
+    fontWeight: "bold",
   },
   button: {
     fontSize: 20,
-    textDecorationLine: "underline",
+    backgroundColor: "#007AFF",
+    
+    paddingVertical: 15,
+    borderRadius: 8,
+    marginTop: 10,
+    // paddingLeft: 20,
+    padding: 20,
+
+    // textDecorationLine: "underline",
     color: "#fff",
   },
 });
