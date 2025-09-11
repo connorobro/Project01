@@ -1,7 +1,9 @@
 import { Stack } from "expo-router";
+import { SavedJobsProvider } from "../src/utils/SavedJobsContext";
 
 export default function RootLayout() {
   return (
+    <SavedJobsProvider>
     <Stack>
       <Stack.Screen name="index" options={{ headerTitle: "Index" }} />
       <Stack.Screen name="Register" options={{ headerTitle: "Register" }} />
@@ -11,5 +13,7 @@ export default function RootLayout() {
       <Stack.Screen name="savedJobs" options={{ headerTitle: "Saved Jobs" }} />
       <Stack.Screen name="jobs" options={{ headerTitle: "Job" }} />
     </Stack>
+    </SavedJobsProvider>
   );
 }
+
