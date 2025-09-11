@@ -1,5 +1,5 @@
-import { useRouter } from "expo-router";
-import React, { useContext } from "react";
+import { router } from "expo-router";
+import { useEffect, useState } from "react";
 import {
   Pressable,
   SafeAreaView,
@@ -8,33 +8,42 @@ import {
   Text,
   View,
 } from "react-native";
-import { AuthContext } from "../context/AuthProvider";
 import { useSavedJobs } from "../src/utils/SavedJobsContext";
+import { AdzunaJob, searchJobs } from "../src/utils/adzuna";
 
-type Job = {
-  id: string;
-  title: string;
-  company: string;
-  location: string;
-  postedAt?: string;
-};
+type JobCard = { id: string; title: string; company: string; location: string; postedAt?: string; url?: string };
 
-export default function JobsScreen() {
-  const { userToken } = useContext(AuthContext);
-  const router = useRouter();
-  React.useEffect(() => {
-    if (!userToken) {
-      router.replace("/Login");
-    }
-  }, [userToken, router]);
-
-  // simple placeholders to match your current UI
-  const jobs: Job[] = [
-    { id: "p1", title: "Job Title", company: "Company", location: "Location" },
-    { id: "p2", title: "Job Title", company: "Company", location: "Location" },
-  ];
-
+export default function jobsScreen() {
+  const [jobs, setJobs] = useState<JobCard[]>([]);
+  const [loading, setLoading] = useState(false);
+  
   const { add, isSaved } = useSavedJobs();
+
+  useEffect(() => {
+    (async () => {
+      try {
+        setLoading(true);
+        // 1) calling our helper to fetch jobs from Adzuna
+        const results: AdzunaJob[] = await searchJobs("junior developer", 1);
+        // 2) mapping API fields into our UI shape (JobCard)
+        const mapped: JobCard[] = results.map(j => ({
+          id: j.id,
+          title: j.title,
+          company: j.company?.display_name ?? "Unknown",
+          location: j.location?.display_name ?? "Unknown",
+          postedAt: j.created,
+          url: j.redirect_url,
+        }));
+      // 3) rendering them 
+        setJobs(mapped);
+      } catch (e) {
+        console.log("API error:", e);
+        setJobs([]); 
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
 
   return (
     <SafeAreaView style={s.screen}>
@@ -47,21 +56,22 @@ export default function JobsScreen() {
           </Pressable>
         </View>
 
-        {/* Search (visual only) */}
+        {/* Search (visual only for now) */}
         <View style={s.input}>
           <Text style={s.muted}>Search (placeholder)</Text>
         </View>
 
-        {/* Placeholder cards */}
         <ScrollView contentContainerStyle={{ paddingBottom: 28 }}>
+          {loading && (
+            <Text style={{ color: "#6b7280", marginBottom: 10 }}>Loading…</Text>
+          )}
+
           {jobs.map((item) => (
             <View key={item.id} style={s.card}>
               <Text style={s.title}>{item.title}</Text>
-              <Text style={s.sub}>
-                {item.company} • {item.location}
-              </Text>
+              <Text style={s.sub}>{item.company} • {item.location}</Text>
               <Text style={s.body}>
-                Short summary placeholder to show how the card will look.
+                {item.url ? "Tap Save to remember this posting." : "Job from Adzuna."}
               </Text>
 
               <View style={s.cardRow}>
@@ -73,14 +83,16 @@ export default function JobsScreen() {
                     isSaved(item.id) && { backgroundColor: "#9CA3AF" },
                   ]}
                 >
-                  <Text style={s.btnText}>
-                    {isSaved(item.id) ? "Saved" : "Save Job"}
-                  </Text>
+                  <Text style={s.btnText}>{isSaved(item.id) ? "Saved" : "Save Job"}</Text>
                 </Pressable>
-                <Text style={s.posted}>Posted: —</Text>
+                <Text style={s.posted}>Posted: {item.postedAt ? item.postedAt.slice(0,10) : "—"}</Text>
               </View>
             </View>
           ))}
+
+          {!loading && jobs.length === 0 && (
+            <Text style={{ color: "#6b7280" }}>No results.</Text>
+          )}
         </ScrollView>
       </View>
     </SafeAreaView>
