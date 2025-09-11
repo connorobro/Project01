@@ -1,4 +1,4 @@
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import {
   Pressable,
@@ -11,22 +11,33 @@ import {
 import { useSavedJobs } from "../src/utils/SavedJobsContext";
 import { AdzunaJob, searchJobs } from "../src/utils/adzuna";
 
-type JobCard = { id: string; title: string; company: string; location: string; postedAt?: string; url?: string };
+type JobCard = {
+  id: string;
+  title: string;
+  company: string;
+  location: string;
+  postedAt?: string;
+  url?: string;
+};
 
 export default function jobsScreen() {
+  const { q } = useLocalSearchParams<{ q?: string }>();
+  const query = (Array.isArray(q) ? q[0] : q) || "software";
+
+  // API results live here
   const [jobs, setJobs] = useState<JobCard[]>([]);
   const [loading, setLoading] = useState(false);
-  
+
   const { add, isSaved } = useSavedJobs();
 
   useEffect(() => {
     (async () => {
       try {
         setLoading(true);
-        // 1) calling our helper to fetch jobs from Adzuna
-        const results: AdzunaJob[] = await searchJobs("junior developer", 1);
-        // 2) mapping API fields into our UI shape (JobCard)
-        const mapped: JobCard[] = results.map(j => ({
+
+        const results: AdzunaJob[] = await searchJobs(query, 1);
+
+        const mapped: JobCard[] = results.map((j) => ({
           id: j.id,
           title: j.title,
           company: j.company?.display_name ?? "Unknown",
@@ -34,17 +45,16 @@ export default function jobsScreen() {
           postedAt: j.created,
           url: j.redirect_url,
         }));
-      // 3) rendering them 
+
         setJobs(mapped);
       } catch (e) {
         console.log("API error:", e);
-        setJobs([]); 
+        setJobs([]);
       } finally {
         setLoading(false);
       }
     })();
-  }, []);
-
+  }, [query]); 
   return (
     <SafeAreaView style={s.screen}>
       <View style={s.wrap}>
@@ -56,15 +66,13 @@ export default function jobsScreen() {
           </Pressable>
         </View>
 
-        {/* Search (visual only for now) */}
+        {/* small hint showing the current query */}
         <View style={s.input}>
-          <Text style={s.muted}>Search (placeholder)</Text>
+          <Text style={s.muted}>Showing results for: {query}</Text>
         </View>
 
         <ScrollView contentContainerStyle={{ paddingBottom: 28 }}>
-          {loading && (
-            <Text style={{ color: "#6b7280", marginBottom: 10 }}>Loading…</Text>
-          )}
+          {loading && <Text style={{ color: "#6b7280", marginBottom: 10 }}>Loading…</Text>}
 
           {jobs.map((item) => (
             <View key={item.id} style={s.card}>
@@ -78,14 +86,11 @@ export default function jobsScreen() {
                 <Pressable
                   onPress={() => add(item)}
                   disabled={isSaved(item.id)}
-                  style={[
-                    s.btn,
-                    isSaved(item.id) && { backgroundColor: "#9CA3AF" },
-                  ]}
+                  style={[s.btn, isSaved(item.id) && { backgroundColor: "#9CA3AF" }]}
                 >
                   <Text style={s.btnText}>{isSaved(item.id) ? "Saved" : "Save Job"}</Text>
                 </Pressable>
-                <Text style={s.posted}>Posted: {item.postedAt ? item.postedAt.slice(0,10) : "—"}</Text>
+                <Text style={s.posted}>Posted: {item.postedAt ? item.postedAt.slice(0, 10) : "—"}</Text>
               </View>
             </View>
           ))}
