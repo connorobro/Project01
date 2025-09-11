@@ -1,23 +1,57 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import { Button, StyleSheet, Text, TextInput, View } from "react-native";
+import { AuthContext } from "../context/AuthProvider";
 
 export default function UserProfile() {
+  // show the current username and password with the ability to edit them
+  const {
+    userToken,
+    username: storedUsername,
+    password: storedPassword,
+    logout,
+  } = React.useContext(AuthContext);
+  const router = useRouter();
   // Dummy initial values; replace with real user data from backend if needed
-  const [username, setUsername] = useState("current_username");
-  const [password, setPassword] = useState("current_password");
+
+  const [username, setUsername] = useState(storedUsername || "");
+  const [password, setPassword] = useState(storedPassword || "");
+  console.log("Stored username:", storedUsername);
+  console.log("Stored password:", storedPassword);
   const [editing, setEditing] = useState(false);
 
-  // // when you click save, you run this function to update the user in the database
-  // const handleSave = async () => {
-  //   // Replace 1 with the actual user id
-  //   const success = await updateUser(1, username, password);
-  //   if (success) {
-  //     setEditing(false);
-  //     console.log("User updated successfully");
-  //   } else {
-  //     console.log("Error updating user");
-  //   }
-  // };
+  // Early return for unauthenticated users
+  if (!userToken) {
+    router.replace("/Login");
+    return null;
+  }
+  const handleSave = async () => {
+    const existingUsers = await AsyncStorage.getItem("users");
+    let users = existingUsers ? JSON.parse(existingUsers) : [];
+
+    // Use storedUsername to find and update the user
+    users = users.map((u: { username: string; password: string }) =>
+      u.username === storedUsername ? { ...u, username, password } : u
+    );
+
+    await AsyncStorage.setItem("users", JSON.stringify(users));
+    await AsyncStorage.setItem("username", username); // update current username in AsyncStorage
+
+    setUsername(username); // update context
+    setPassword(password); // update context
+    console.log("Updated username:", username);
+    console.log("Updated password:", password);
+    setEditing(false);
+
+    // Warn and log out
+    if (username !== storedUsername || password !== storedPassword) {
+      alert("Your username or password has changed. You will be logged out.");
+      if (typeof logout === "function") {
+        logout();
+      }
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -40,12 +74,11 @@ export default function UserProfile() {
           editable={editing}
           onChangeText={setPassword}
           placeholder="Enter new password"
-          secureTextEntry
         />
       </View>
       <Button
         title={editing ? "Save" : "Edit"}
-        onPress={editing ? () => {} : () => setEditing(true)} // Replace () => {} with handleSave when uncommenting handleSave function
+        onPress={editing ? handleSave : () => setEditing(true)}
       />
     </View>
   );

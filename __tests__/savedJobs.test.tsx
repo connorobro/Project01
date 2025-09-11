@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react-native";
 import React from "react";
-import SavedJobs from "./savedJobs";
+import SavedJobs from "../app/savedJobs";
 
 jest.mock("expo-router", () => ({ Stack: { Screen: () => null } }));
 
