@@ -5,6 +5,12 @@ export default function Index() {
   return (
     <View style={styles.container}>
       <Text style={styles.text}>Hello React</Text>
+      <Link href="./Register" style={styles.button}>
+        Register
+      </Link>
+      <Link href={"./Login"} style={styles.button}>
+        Login
+      </Link>
       <Link href={"/Home"} style={styles.button}>
         Home
       </Link>
@@ -13,6 +19,9 @@ export default function Index() {
       </Link>
       <Link href={"/jobs"} style={styles.button}>
         Job
+      </Link>
+      <Link href={"/debug"} style={styles.button}>
+        View Database
       </Link>
     </View>
   );
