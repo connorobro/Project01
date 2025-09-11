@@ -1,4 +1,5 @@
-import { router } from "expo-router";
+import { useRouter } from "expo-router";
+import React, { useContext } from "react";
 import {
   Pressable,
   SafeAreaView,
@@ -7,11 +8,26 @@ import {
   Text,
   View,
 } from "react-native";
+import { AuthContext } from "../context/AuthProvider";
 import { useSavedJobs } from "../src/utils/SavedJobsContext";
 
-type Job = { id: string; title: string; company: string; location: string; postedAt?: string };
+type Job = {
+  id: string;
+  title: string;
+  company: string;
+  location: string;
+  postedAt?: string;
+};
 
-export default function jobsScreen() {
+export default function JobsScreen() {
+  const { userToken } = useContext(AuthContext);
+  const router = useRouter();
+  React.useEffect(() => {
+    if (!userToken) {
+      router.replace("/Login");
+    }
+  }, [userToken, router]);
+
   // simple placeholders to match your current UI
   const jobs: Job[] = [
     { id: "p1", title: "Job Title", company: "Company", location: "Location" },
@@ -41,7 +57,9 @@ export default function jobsScreen() {
           {jobs.map((item) => (
             <View key={item.id} style={s.card}>
               <Text style={s.title}>{item.title}</Text>
-              <Text style={s.sub}>{item.company} • {item.location}</Text>
+              <Text style={s.sub}>
+                {item.company} • {item.location}
+              </Text>
               <Text style={s.body}>
                 Short summary placeholder to show how the card will look.
               </Text>
@@ -55,7 +73,9 @@ export default function jobsScreen() {
                     isSaved(item.id) && { backgroundColor: "#9CA3AF" },
                   ]}
                 >
-                  <Text style={s.btnText}>{isSaved(item.id) ? "Saved" : "Save Job"}</Text>
+                  <Text style={s.btnText}>
+                    {isSaved(item.id) ? "Saved" : "Save Job"}
+                  </Text>
                 </Pressable>
                 <Text style={s.posted}>Posted: —</Text>
               </View>

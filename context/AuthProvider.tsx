@@ -1,0 +1,55 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import React, { createContext, ReactNode, useState } from "react";
+
+type AuthContextType = {
+  userToken: string | null;
+  login: (token: string, username: string) => Promise<void>;
+  logout: () => Promise<void>;
+  username: string | null;
+};
+
+export const AuthContext = createContext<AuthContextType>({
+  userToken: null,
+  username: null,
+  login: async () => {},
+  logout: async () => {},
+});
+
+type AuthProviderProps = {
+  children: ReactNode;
+};
+
+export const AuthProvider = ({ children }: AuthProviderProps) => {
+  const [userToken, setUserToken] = useState<string | null>(null);
+  const [username, setUsername] = useState<string | null>(null);
+  // Load token and username from AsyncStorage on mount
+  React.useEffect(() => {
+    const loadUserData = async () => {
+      const token = await AsyncStorage.getItem("userToken");
+      const username = await AsyncStorage.getItem("username");
+      setUserToken(token);
+      setUsername(username);
+    };
+    loadUserData();
+  }, []);
+
+  const login = async (token: string, username: string) => {
+    await AsyncStorage.setItem("userToken", token);
+    await AsyncStorage.setItem("username", username);
+    setUserToken(token);
+    setUsername(username);
+  };
+
+  const logout = async () => {
+    await AsyncStorage.removeItem("userToken");
+    await AsyncStorage.removeItem("username");
+    setUserToken(null);
+    setUsername(null);
+  };
+
+  return (
+    <AuthContext.Provider value={{ userToken, username, login, logout }}>
+      {children}
+    </AuthContext.Provider>
+  );
+};
