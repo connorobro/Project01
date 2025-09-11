@@ -1,9 +1,11 @@
 import { Link, useRouter } from "expo-router";
 import * as React from "react";
+import { useContext } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import "react-native-dotenv";
 import { Dropdown } from "react-native-element-dropdown";
 import { Button, Menu, Provider } from "react-native-paper";
+import { AuthContext } from "../context/AuthProvider";
 
 const DropdownCategory = ({
   category,
@@ -23,7 +25,7 @@ const DropdownCategory = ({
       .then((response) => response.json())
       .then((data) => {
         const formattedData = data.results.map(
-          (item: { label: any; value: any }) => ({
+          (item: { label: string; value: string }) => ({
             label: item.label,
             value: item.value,
           })
@@ -61,65 +63,33 @@ const DropdownCategory = ({
     </View>
   );
 };
-const DropdownTopCompanies = ({ category }: { category: string | null }) => {
-  const [value, setValue] = React.useState(null);
-  const [isFocus, setIsFocus] = React.useState(false);
-  const [data, setData] = React.useState([]);
-
-  // React.useEffect(() => {
-  //   // get the category from the selected value in DropdownCategory and use it in the fetch url to get the top companies in that category
-  //   fetch(
-  //     `https://api.adzuna.com/v1/api/jobs/us/top_companies?app_id=1d470760&app_key=6126fe3526d0313b67aab87e35cfb3aa&category=${category}`
-  //   )
-  //     .then((response) => response.json())
-  //     .then((data) => {
-  //       const formattedData = data.leaderboard.map(
-  //         (item: { canonical_name: string; count: number }) => ({
-  //           label: `${item.canonical_name} (${item.count})`,
-  //           value: item.canonical_name,
-  //         })
-  //       );
-  //       setData(formattedData);
-  //     })
-  //     .catch((error) => {
-  //       console.error("Error fetching data:", error);
-  //     });
-  // }, [category]);
-
-  return (
-    <View style={dropdownStyles.container}>
-      <Dropdown
-        style={[dropdownStyles.dropdown, isFocus && { borderColor: "blue" }]}
-        placeholderStyle={dropdownStyles.placeholderStyle}
-        selectedTextStyle={dropdownStyles.selectedTextStyle}
-        inputSearchStyle={dropdownStyles.inputSearchStyle}
-        iconStyle={dropdownStyles.iconStyle}
-        data={data}
-        search
-        maxHeight={300}
-        labelField="label"
-        valueField="value"
-        placeholder={!isFocus ? "Select item" : "..."}
-        searchPlaceholder="Search..."
-        value={value}
-        onFocus={() => setIsFocus(true)}
-        onBlur={() => setIsFocus(false)}
-        onChange={(item) => {
-          setValue(item.value);
-          setIsFocus(false);
-        }}
-      />
-    </View>
-  );
-};
 
 export default function HomeScreen() {
+  // All hooks at the top
   const [menuVisible, setMenuVisible] = React.useState(false);
   const [category, setCategory] = React.useState<string | null>(null);
   const openMenu = () => setMenuVisible(true);
   const closeMenu = () => setMenuVisible(false);
-
+  const { userToken, username, logout } = useContext(AuthContext);
   const router = useRouter();
+
+  // Early return for unauthenticated users
+  if (!userToken) {
+    router.replace("/Login");
+    return null;
+  }
+
+  // const [mounted, setMounted] = React.useState(false);
+
+  // React.useEffect(() => {
+  //   setMounted(true);
+  // }, []);
+
+  // React.useEffect(() => {
+  //   if (mounted && !userToken) {
+  //     router.replace("/Login");
+  //   }
+  // }, [mounted, userToken, router]);
 
   return (
     <Provider>
@@ -148,14 +118,15 @@ export default function HomeScreen() {
             onDismiss={closeMenu}
             anchor={
               <Button mode="contained" onPress={openMenu} style={styles.button}>
-                Username
+                {username || "User"}
               </Button>
             }
           >
             <Menu.Item
               onPress={() => {
                 closeMenu();
-                //handle logout logic here
+                // call logout function from context
+                logout();
               }}
               title="Logout"
             />
@@ -181,10 +152,6 @@ export default function HomeScreen() {
           <View style={{ width: 180, marginRight: 16, alignItems: "center" }}>
             <Text style={styles.text}>Choose Job Category</Text>
             <DropdownCategory category={category} setCategory={setCategory} />
-          </View>
-          <View style={{ width: 180, alignItems: "center" }}>
-            <Text style={styles.text}>Choose Level Category</Text>
-            <DropdownTopCompanies category={category} />
           </View>
         </View>
         <br />

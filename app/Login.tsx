@@ -1,73 +1,77 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useRouter } from "expo-router";
+import React, { useContext, useState } from "react";
 import {
-    KeyboardAvoidingView,
-    Platform,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View
-} from 'react-native';
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { AuthContext } from "../context/AuthProvider";
 
 export default function Login() {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [feedback, setFeedback] = useState('');
+  const [feedback, setFeedback] = useState("");
   const router = useRouter();
 
+  const { login } = useContext(AuthContext);
+
   const handleLogin = async () => {
-    setFeedback('');
+    setFeedback("");
 
     if (!username.trim() || !password.trim()) {
-      setFeedback('Please fill in all fields');
+      setFeedback("Please fill in all fields");
       return;
     }
 
     setLoading(true);
-    setFeedback('Logging in...');
+    setFeedback("Logging in...");
 
     try {
-      const existingUsers = await AsyncStorage.getItem('users');
+      const existingUsers = await AsyncStorage.getItem("users");
       const users = existingUsers ? JSON.parse(existingUsers) : [];
 
-      const user = users.find((u: any) => 
-        u.username === username && u.password === password
+      const user = users.find(
+        (u: any) => u.username === username && u.password === password
       );
-
       if (user) {
-        await AsyncStorage.setItem('currentUser', JSON.stringify(user));
-        await AsyncStorage.setItem('isLoggedIn', 'true');
-        
-        setFeedback('Login successful! Welcome back!');
-        
+        await login("someTokenValue", user.username); // Replace "someTokenValue" with a real token if you have one
+        setFeedback("Login successful! Welcome back!");
+
+        await AsyncStorage.setItem("currentUser", JSON.stringify(user));
+        await AsyncStorage.setItem("isLoggedIn", "true");
+
+        setFeedback("Login successful! Welcome back!");
+
         setTimeout(() => {
-          router.replace('/Home');
+          router.replace("/Home");
         }, 1500);
       } else {
-        setFeedback('Invalid username or password');
+        setFeedback("Invalid username or password");
       }
-
     } catch (error) {
-      console.error('Login error:', error);
-      setFeedback('Failed to login. Please try again.');
+      console.error("Login error:", error);
+      setFeedback("Failed to login. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <KeyboardAvoidingView 
+    <KeyboardAvoidingView
       style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.formContainer}>
           <Text style={styles.title}>Welcome Back</Text>
-          
+
           <TextInput
             style={styles.input}
             placeholder="Username"
@@ -87,32 +91,34 @@ export default function Login() {
           />
 
           {feedback ? (
-            <View style={[
-              styles.feedbackContainer, 
-              feedback.includes('successful') || feedback.includes('Welcome') 
-                ? styles.successFeedback 
-                : styles.errorFeedback
-            ]}>
+            <View
+              style={[
+                styles.feedbackContainer,
+                feedback.includes("successful") || feedback.includes("Welcome")
+                  ? styles.successFeedback
+                  : styles.errorFeedback,
+              ]}
+            >
               <Text style={styles.feedbackText}>{feedback}</Text>
             </View>
           ) : null}
 
-          <TouchableOpacity 
+          <TouchableOpacity
             style={[styles.button, loading && styles.buttonDisabled]}
             onPress={handleLogin}
             disabled={loading}
           >
             <Text style={styles.buttonText}>
-              {loading ? 'Logging in...' : 'Login'}
+              {loading ? "Logging in..." : "Login"}
             </Text>
           </TouchableOpacity>
 
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.linkButton}
-            onPress={() => router.push('/Register')}
+            onPress={() => router.push("/Register")}
           >
             <Text style={styles.linkText}>
-              Don't have an account? Register here
+              Do not have an account? Register here
             </Text>
           </TouchableOpacity>
         </View>
@@ -124,28 +130,28 @@ export default function Login() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#25292e',
+    backgroundColor: "#25292e",
   },
   scrollContent: {
     flexGrow: 1,
-    justifyContent: 'center',
+    justifyContent: "center",
   },
   formContainer: {
     padding: 20,
     margin: 20,
-    backgroundColor: '#1a1d21',
+    backgroundColor: "#1a1d21",
     borderRadius: 10,
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
-    color: '#fff',
-    textAlign: 'center',
+    fontWeight: "bold",
+    color: "#fff",
+    textAlign: "center",
     marginBottom: 30,
   },
   input: {
-    backgroundColor: '#2a2d32',
-    color: '#fff',
+    backgroundColor: "#2a2d32",
+    color: "#fff",
     paddingHorizontal: 15,
     paddingVertical: 12,
     borderRadius: 8,
@@ -158,38 +164,38 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   successFeedback: {
-    backgroundColor: '#4CAF50',
+    backgroundColor: "#4CAF50",
   },
   errorFeedback: {
-    backgroundColor: '#FF3B30',
+    backgroundColor: "#FF3B30",
   },
   feedbackText: {
-    color: '#fff',
-    textAlign: 'center',
+    color: "#fff",
+    textAlign: "center",
     fontSize: 14,
-    fontWeight: '500',
+    fontWeight: "500",
   },
   button: {
-    backgroundColor: '#007AFF',
+    backgroundColor: "#007AFF",
     paddingVertical: 15,
     borderRadius: 8,
     marginTop: 10,
   },
   buttonDisabled: {
-    backgroundColor: '#555',
+    backgroundColor: "#555",
   },
   buttonText: {
-    color: '#fff',
-    textAlign: 'center',
+    color: "#fff",
+    textAlign: "center",
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   linkButton: {
     marginTop: 20,
   },
   linkText: {
-    color: '#007AFF',
-    textAlign: 'center',
+    color: "#007AFF",
+    textAlign: "center",
     fontSize: 14,
   },
 });
