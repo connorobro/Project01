@@ -41,7 +41,7 @@ export default function Login() {
         (u: any) => u.username === username && u.password === password
       );
       if (user) {
-        await login("someTokenValue", user.username); // Replace "someTokenValue" with a real token if you have one
+        await login("someTokenValue", user.username, user.password); // Replace "someTokenValue" with a real token if you have one
         setFeedback("Login successful! Welcome back!");
 
         await AsyncStorage.setItem("currentUser", JSON.stringify(user));

@@ -58,6 +58,7 @@ const DropdownCategory = ({
         onChange={(item) => {
           setValue(item.value);
           setIsFocus(false);
+          setCategory(item.value); // Update the category state
         }}
       />
     </View>
@@ -68,101 +69,97 @@ export default function HomeScreen() {
   // All hooks at the top
   const [menuVisible, setMenuVisible] = React.useState(false);
   const [category, setCategory] = React.useState<string | null>(null);
+  const [isMounted, setIsMounted] = React.useState(false);
   const openMenu = () => setMenuVisible(true);
   const closeMenu = () => setMenuVisible(false);
   const { userToken, username, logout } = useContext(AuthContext);
   const router = useRouter();
-  
 
-  // const [mounted, setMounted] = React.useState(false);
+  // Set mounted state
+  React.useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
-  // React.useEffect(() => {
-  //   setMounted(true);
-  // }, []);
-
-  // React.useEffect(() => {
-  //   if (mounted && !userToken) {
-  //     router.replace("/Login");
-  //   }
-  // }, [mounted, userToken, router]);
+  // Redirect unauthenticated users after mount
+  React.useEffect(() => {
+    if (isMounted && !userToken) {
+      router.replace("/Login");
+    }
+  }, [isMounted, userToken, router]);
 
   return (
     <ProtectedRoute>
       <Provider>
         <View style={styles.container}>
-        <View
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignItems: "flex-start",
-            width: "100%",
-            paddingHorizontal: 20,
-            paddingTop: 40,
-            zIndex: 10,
-          }}
-        >
-          <Link href="/savedJobs" style={styles.button}>
-            Saved Jobs
-          </Link>
-
-          <Menu
-            visible={menuVisible}
-            onDismiss={closeMenu}
-            anchor={
-              <Button mode="contained" onPress={openMenu} style={styles.button}>
-                {username || "User"}
-              </Button>
-            }
+          <View
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              right: 0,
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "flex-start",
+              width: "100%",
+              paddingHorizontal: 20,
+              paddingTop: 40,
+              zIndex: 10,
+            }}
           >
-            <Menu.Item
-              onPress={() => {
-                closeMenu();
-                // call logout function from context
-                logout();
-              }}
-              title="Logout"
-            />
-            <Menu.Item
-              onPress={() => {
-                closeMenu();
-                // router to go to user profile page
-                router.push("/userProfile");
-              }}
-              title="User Profile"
-            />
-          </Menu>
-        </View>
+            <Link href="/savedJobs" style={styles.button}>
+              Saved Jobs
+            </Link>
 
-        {/* Main content */}
-        <View
-          style={{
-            flexDirection: "row",
-            marginTop: 80,
-            justifyContent: "center",
-          }}
-        >
-          <View style={{ width: 180, marginRight: 16, alignItems: "center" }}>
-            <Text style={styles.text}>Choose Job Category</Text>
-            <DropdownCategory category={category} setCategory={setCategory} />
+            <Menu
+              visible={menuVisible}
+              onDismiss={closeMenu}
+              anchor={
+                <Button mode="contained" onPress={openMenu} style={styles.button}>
+                  {username || "User"}
+                </Button>
+              }
+            >
+              <Menu.Item
+                onPress={() => {
+                  closeMenu();
+                  logout();
+                }}
+                title="Logout"
+              />
+              <Menu.Item
+                onPress={() => {
+                  closeMenu();
+                  router.push("/userProfile");
+                }}
+                title="User Profile"
+              />
+            </Menu>
+          </View>
+
+          {/* Main content */}
+          <View
+            style={{
+              flexDirection: "row",
+              marginTop: 80,
+              justifyContent: "center",
+            }}
+          >
+            <View style={{ width: 180, marginRight: 16, alignItems: "center" }}>
+              <Text style={styles.text}>Choose Job Category</Text>
+              <DropdownCategory category={category} setCategory={setCategory} />
+            </View>
+          </View>
+          <View style={{ marginTop: 40 }}>
+            <Link href="/jobs" style={styles.button}>
+              Search Jobs
+            </Link>
           </View>
         </View>
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <Link href="/jobs" style={styles.button}>
-          Search Jobs
-        </Link>
-      </View>
       </Provider>
     </ProtectedRoute>
   );
 }
+
 const dropdownStyles = StyleSheet.create({
   container: {
     backgroundColor: "white",
