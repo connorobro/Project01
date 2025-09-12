@@ -1,3 +1,4 @@
+import ProtectedRoute from "@/src/utils/ProtectedRoute";
 import { Stack, useRouter } from "expo-router";
 import * as React from "react";
 import { useContext } from "react";
@@ -15,6 +16,7 @@ export default function SavedJobs() {
   }, [userToken, router]);
 
   return (
+    <ProtectedRoute>
     <View style={{ flex: 1, backgroundColor: "#111827", padding: 16 }}>
       <Stack.Screen options={{ title: "Saved Jobs" }} />
 
@@ -65,5 +67,6 @@ export default function SavedJobs() {
         </Text>
       </View>
     </View>
+    </ProtectedRoute>
   );
 }

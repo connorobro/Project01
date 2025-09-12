@@ -1,3 +1,4 @@
+import ProtectedRoute from "@/src/utils/ProtectedRoute";
 import { Link, useRouter } from "expo-router";
 import * as React from "react";
 import { useContext } from "react";
@@ -71,12 +72,7 @@ export default function HomeScreen() {
   const closeMenu = () => setMenuVisible(false);
   const { userToken, username, logout } = useContext(AuthContext);
   const router = useRouter();
-
-  // Early return for unauthenticated users
-  if (!userToken) {
-    router.replace("/Login");
-    return null;
-  }
+  
 
   // const [mounted, setMounted] = React.useState(false);
 
@@ -91,8 +87,9 @@ export default function HomeScreen() {
   // }, [mounted, userToken, router]);
 
   return (
-    <Provider>
-      <View style={styles.container}>
+    <ProtectedRoute>
+      <Provider>
+        <View style={styles.container}>
         <View
           style={{
             position: "absolute",
@@ -162,7 +159,8 @@ export default function HomeScreen() {
           Search Jobs
         </Link>
       </View>
-    </Provider>
+      </Provider>
+    </ProtectedRoute>
   );
 }
 const dropdownStyles = StyleSheet.create({

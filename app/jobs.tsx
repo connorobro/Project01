@@ -1,3 +1,4 @@
+import ProtectedRoute from "@/src/utils/ProtectedRoute";
 import { useRouter } from "expo-router";
 import React, { useContext } from "react";
 import {
@@ -37,6 +38,7 @@ export default function JobsScreen() {
   const { add, isSaved } = useSavedJobs();
 
   return (
+    <ProtectedRoute>
     <SafeAreaView style={s.screen}>
       <View style={s.wrap}>
         {/* Navbar */}
@@ -84,6 +86,7 @@ export default function JobsScreen() {
         </ScrollView>
       </View>
     </SafeAreaView>
+    </ProtectedRoute>
   );
 }
 
