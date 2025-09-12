@@ -4,7 +4,8 @@ import { StyleSheet, View } from "react-native";
 export default function Index() {
   return (
     <View style={styles.container}>
-      {/* <Text style={styles.text}>Hello React</Text> */}
+      <text style={styles.text}>Welcome</text>
+
       <Link href="./Register" style={styles.button}>
         Register
       </Link>
@@ -20,16 +21,15 @@ export default function Index() {
       {/* <Link href={"/jobs"} style={styles.button}>
         Job
       </Link> */}
-      <Link href={"/debug"} style={styles.button}>
+      {/* <Link href={"/debug"} style={styles.button}>
         View Database
-      </Link>
+      </Link> */}
     </View>
   );
 }
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // flexDirection:'row', 
     gap: '15px',
     justifyContent: "center",
     alignItems: "center",
@@ -37,19 +37,19 @@ const styles = StyleSheet.create({
     
   },
   text: {
-    // color: "white",
-    // fontSize: 24,
+    color: "white",
+    fontSize: 50,
     fontWeight: "bold",
-    color: "#fff",
+    // color: "#fff",
     textAlign: "center",
-    fontSize: 16,
-    // fontWeight: "bold",
   },
+
   buttonText: {
     color: "#fff",
     textAlign: "center",
     fontSize: 16,
-    fontWeight: "bold",
+    fontWeight: "bold", 
+    letterSpacing: 2
   },
   button: {
     fontSize: 20,
@@ -59,8 +59,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginTop: 10,
     // paddingLeft: 20,
-    padding: 20,
-
+    padding: 40,
     // textDecorationLine: "underline",
     color: "#fff",
   },
