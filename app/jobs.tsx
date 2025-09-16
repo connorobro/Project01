@@ -1,4 +1,4 @@
-import { router, useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import {
   Pressable,
@@ -35,7 +35,6 @@ export default function JobsScreen() {
         setLoading(true);
         const results: AdzunaJob[] = await searchJobs(query, 1);
         // 1) calling our helper to fetch jobs from Adzuna
-        const results: AdzunaJob[] = await searchJobs("junior developer", 1);
         // 2) mapping API fields into our UI shape (JobCard)
         const mapped: JobCard[] = results.map((j) => ({
           id: j.id,
