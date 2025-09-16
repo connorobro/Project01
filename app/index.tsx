@@ -1,16 +1,7 @@
 import { Link } from "expo-router";
-import { useEffect } from "react";
 import { StyleSheet, Text, View } from "react-native";
-export default function Index() {
-    useEffect(() => {
-    if (typeof window !== 'undefined') {
-      // If someone typed a URL other than root, redirect to root
-      if (window.location.pathname !== '/' && window.location.pathname !== '') {
-        window.location.href = '/';
-      }
-    }
-  }, []);
 
+export default function Index() {
   return (
     <View style={styles.container}>
       <Text style={styles.text}>Hello React</Text>

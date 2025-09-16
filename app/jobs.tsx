@@ -1,5 +1,4 @@
-import ProtectedRoute from "@/src/utils/ProtectedRoute";
-import { useRouter } from "expo-router";
+import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import {
   Pressable,
@@ -24,7 +23,7 @@ type JobCard = {
 export default function JobsScreen() {
   const [jobs, setJobs] = useState<JobCard[]>([]);
   const [loading, setLoading] = useState(false);
-  const router = useRouter();
+
   const { add, isSaved } = useSavedJobs();
 
   useEffect(() => {
@@ -54,66 +53,64 @@ export default function JobsScreen() {
   }, []);
 
   return (
-    <ProtectedRoute>
-      <SafeAreaView style={s.screen}>
-        <View style={s.wrap}>
-          {/* Navbar */}
-          <View style={s.row}>
-            <Text style={s.h1}>Job Listings</Text>
-            <Pressable style={s.pill} onPress={() => router.push("/savedJobs")}>
-              <Text style={s.pillText}>Saved Jobs</Text>
-            </Pressable>
-          </View>
-
-          {/* Search (visual only for now) */}
-          <View style={s.input}>
-            <Text style={s.muted}>Search (placeholder)</Text>
-          </View>
-
-          <ScrollView contentContainerStyle={{ paddingBottom: 28 }}>
-            {loading && (
-              <Text style={{ color: "#6b7280", marginBottom: 10 }}>Loading…</Text>
-            )}
-
-            {jobs.map((item) => (
-              <View key={item.id} style={s.card}>
-                <Text style={s.title}>{item.title}</Text>
-                <Text style={s.sub}>
-                  {item.company} • {item.location}
-                </Text>
-                <Text style={s.body}>
-                  {item.url
-                    ? "Tap Save to remember this posting."
-                    : "Job from Adzuna."}
-                </Text>
-
-                <View style={s.cardRow}>
-                  <Pressable
-                    onPress={() => add(item)}
-                    disabled={isSaved(item.id)}
-                    style={[
-                      s.btn,
-                      isSaved(item.id) && { backgroundColor: "#9CA3AF" },
-                    ]}
-                  >
-                    <Text style={s.btnText}>
-                      {isSaved(item.id) ? "Saved" : "Save Job"}
-                    </Text>
-                  </Pressable>
-                  <Text style={s.posted}>
-                    Posted: {item.postedAt ? item.postedAt.slice(0, 10) : "—"}
-                  </Text>
-                </View>
-              </View>
-            ))}
-
-            {!loading && jobs.length === 0 && (
-              <Text style={{ color: "#6b7280" }}>No results.</Text>
-            )}
-          </ScrollView>
+    <SafeAreaView style={s.screen}>
+      <View style={s.wrap}>
+        {/* Navbar */}
+        <View style={s.row}>
+          <Text style={s.h1}>Job Listings</Text>
+          <Pressable style={s.pill} onPress={() => router.push("/savedJobs")}>
+            <Text style={s.pillText}>Saved Jobs</Text>
+          </Pressable>
         </View>
-      </SafeAreaView>
-    </ProtectedRoute>
+
+        {/* Search (visual only for now) */}
+        <View style={s.input}>
+          <Text style={s.muted}>Search (placeholder)</Text>
+        </View>
+
+        <ScrollView contentContainerStyle={{ paddingBottom: 28 }}>
+          {loading && (
+            <Text style={{ color: "#6b7280", marginBottom: 10 }}>Loading…</Text>
+          )}
+
+          {jobs.map((item) => (
+            <View key={item.id} style={s.card}>
+              <Text style={s.title}>{item.title}</Text>
+              <Text style={s.sub}>
+                {item.company} • {item.location}
+              </Text>
+              <Text style={s.body}>
+                {item.url
+                  ? "Tap Save to remember this posting."
+                  : "Job from Adzuna."}
+              </Text>
+
+              <View style={s.cardRow}>
+                <Pressable
+                  onPress={() => add(item)}
+                  disabled={isSaved(item.id)}
+                  style={[
+                    s.btn,
+                    isSaved(item.id) && { backgroundColor: "#9CA3AF" },
+                  ]}
+                >
+                  <Text style={s.btnText}>
+                    {isSaved(item.id) ? "Saved" : "Save Job"}
+                  </Text>
+                </Pressable>
+                <Text style={s.posted}>
+                  Posted: {item.postedAt ? item.postedAt.slice(0, 10) : "—"}
+                </Text>
+              </View>
+            </View>
+          ))}
+
+          {!loading && jobs.length === 0 && (
+            <Text style={{ color: "#6b7280" }}>No results.</Text>
+          )}
+        </ScrollView>
+      </View>
+    </SafeAreaView>
   );
 }
 
@@ -126,6 +123,7 @@ const s = StyleSheet.create({
     justifyContent: "space-between",
   },
   h1: { fontSize: 22, fontWeight: "800" },
+
   pill: {
     backgroundColor: "#0ea5a4",
     paddingHorizontal: 12,
@@ -133,6 +131,7 @@ const s = StyleSheet.create({
     borderRadius: 12,
   },
   pillText: { color: "#ffffff", fontWeight: "700" },
+
   input: {
     height: 42,
     borderRadius: 12,
@@ -145,6 +144,7 @@ const s = StyleSheet.create({
     marginBottom: 12,
   },
   muted: { color: "#6b7280" },
+
   card: {
     backgroundColor: "#ffffff",
     borderRadius: 16,
@@ -158,6 +158,7 @@ const s = StyleSheet.create({
   title: { fontSize: 16, fontWeight: "700", color: "#0f172a" },
   sub: { marginTop: 2, color: "#6b7280" },
   body: { marginTop: 8, color: "#1f2937" },
+
   cardRow: {
     marginTop: 12,
     flexDirection: "row",
