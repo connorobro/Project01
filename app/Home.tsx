@@ -15,7 +15,9 @@ const DropdownCategory = ({
 }) => {
   const [value, setValue] = React.useState<string | null>(null);
   const [isFocus, setIsFocus] = React.useState(false);
-  const [data, setData] = React.useState<{ label: string; value: string }[]>([]);
+  const [data, setData] = React.useState<{ label: string; value: string }[]>(
+    []
+  );
 
   // fetching Adzuna categories
   React.useEffect(() => {
@@ -56,7 +58,7 @@ const DropdownCategory = ({
         onChange={(item) => {
           setValue(item.value);
           setIsFocus(false);
-          setCategory(item.value); 
+          setCategory(item.value);
         }}
       />
     </View>
@@ -75,7 +77,7 @@ export default function HomeScreen() {
   // Early return for unauthenticated users
   React.useEffect(() => {
     if (!userToken) {
-      router.replace("/Login");
+      router.replace("/");
     }
   }, [userToken, router]);
 
@@ -115,7 +117,13 @@ export default function HomeScreen() {
         </View>
 
         {/* main content */}
-        <View style={{ flexDirection: "row", marginTop: 80, justifyContent: "center" }}>
+        <View
+          style={{
+            flexDirection: "row",
+            marginTop: 80,
+            justifyContent: "center",
+          }}
+        >
           <View style={{ width: 180, marginRight: 16, alignItems: "center" }}>
             <Text style={styles.text}>Choose Job Category</Text>
             <DropdownCategory category={category} setCategory={setCategory} />
@@ -138,7 +146,12 @@ export default function HomeScreen() {
 }
 
 const dropdownStyles = StyleSheet.create({
-  container: { backgroundColor: "white", padding: 16, borderRadius: 10, marginTop: 10 },
+  container: {
+    backgroundColor: "white",
+    padding: 16,
+    borderRadius: 10,
+    marginTop: 10,
+  },
   dropdown: {
     height: 60,
     minWidth: 160,
@@ -155,7 +168,12 @@ const dropdownStyles = StyleSheet.create({
 });
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#25292e", justifyContent: "center", alignItems: "center" },
+  container: {
+    flex: 1,
+    backgroundColor: "#25292e",
+    justifyContent: "center",
+    alignItems: "center",
+  },
   topBar: {
     position: "absolute",
     top: 0,
@@ -170,6 +188,11 @@ const styles = StyleSheet.create({
     zIndex: 10,
   },
   text: { color: "white" },
-  button: { backgroundColor: "#4CAF50", padding: 12, borderRadius: 8, minWidth: 160, alignItems: "center" },
+  button: {
+    backgroundColor: "#4CAF50",
+    padding: 12,
+    borderRadius: 8,
+    minWidth: 160,
+    alignItems: "center",
+  },
 });
-

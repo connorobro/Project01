@@ -1,7 +1,18 @@
-import { Link } from "expo-router";
+import { Link, useRouter } from "expo-router";
+import React, { useContext, useEffect } from "react";
 import { StyleSheet, Text, View } from "react-native";
+import { AuthContext } from "../context/AuthProvider";
 
 export default function Index() {
+  const { userToken } = useContext(AuthContext);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (userToken) {
+      router.replace("/Home");
+    }
+  }, [userToken, router]);
+
   return (
     <View style={styles.container}>
       <Text style={styles.text}>Hello React</Text>
@@ -11,7 +22,7 @@ export default function Index() {
       <Link href={"./Login"} style={styles.button}>
         Login
       </Link>
-      <Link href={"/Home"} style={styles.button}>
+      {/* <Link href={"/Home"} style={styles.button}>
         Home
       </Link>
       <Link href={"/savedJobs"} style={styles.button}>
@@ -19,7 +30,7 @@ export default function Index() {
       </Link>
       <Link href={"/jobs"} style={styles.button}>
         Job
-      </Link>
+      </Link> */}
       <Link href={"/debug"} style={styles.button}>
         View Database
       </Link>
