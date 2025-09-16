@@ -1,4 +1,4 @@
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import {
   Pressable,
@@ -21,15 +21,19 @@ type JobCard = {
 };
 
 export default function JobsScreen() {
+  const { q } = useLocalSearchParams<{ q?: string }>();
+  const query = (Array.isArray(q) ? q[0] : q) || "software";
+  
   const [jobs, setJobs] = useState<JobCard[]>([]);
   const [loading, setLoading] = useState(false);
-
+  const router = useRouter();
   const { add, isSaved } = useSavedJobs();
 
   useEffect(() => {
     (async () => {
       try {
         setLoading(true);
+        const results: AdzunaJob[] = await searchJobs(query, 1);
         // 1) calling our helper to fetch jobs from Adzuna
         const results: AdzunaJob[] = await searchJobs("junior developer", 1);
         // 2) mapping API fields into our UI shape (JobCard)
@@ -50,8 +54,7 @@ export default function JobsScreen() {
         setLoading(false);
       }
     })();
-  }, []);
-
+  }, [query]); 
   return (
     <SafeAreaView style={s.screen}>
       <View style={s.wrap}>
@@ -63,15 +66,13 @@ export default function JobsScreen() {
           </Pressable>
         </View>
 
-        {/* Search (visual only for now) */}
+        {/* small hint showing the current query */}
         <View style={s.input}>
-          <Text style={s.muted}>Search (placeholder)</Text>
+          <Text style={s.muted}>Showing results for: {query}</Text>
         </View>
 
         <ScrollView contentContainerStyle={{ paddingBottom: 28 }}>
-          {loading && (
-            <Text style={{ color: "#6b7280", marginBottom: 10 }}>Loading…</Text>
-          )}
+          {loading && <Text style={{ color: "#6b7280", marginBottom: 10 }}>Loading…</Text>}
 
           {jobs.map((item) => (
             <View key={item.id} style={s.card}>
@@ -89,10 +90,7 @@ export default function JobsScreen() {
                 <Pressable
                   onPress={() => add(item)}
                   disabled={isSaved(item.id)}
-                  style={[
-                    s.btn,
-                    isSaved(item.id) && { backgroundColor: "#9CA3AF" },
-                  ]}
+                  style={[s.btn, isSaved(item.id) && { backgroundColor: "#9CA3AF" }]}
                 >
                   <Text style={s.btnText}>
                     {isSaved(item.id) ? "Saved" : "Save Job"}
