@@ -20,23 +20,23 @@ type JobCard = {
   url?: string;
 };
 
-export default function jobsScreen() {
+export default function JobsScreen() {
   const { q } = useLocalSearchParams<{ q?: string }>();
   const query = (Array.isArray(q) ? q[0] : q) || "software";
-
-  // API results live here
+  
   const [jobs, setJobs] = useState<JobCard[]>([]);
   const [loading, setLoading] = useState(false);
-
+  const router = useRouter();
   const { add, isSaved } = useSavedJobs();
 
   useEffect(() => {
     (async () => {
       try {
         setLoading(true);
-
         const results: AdzunaJob[] = await searchJobs(query, 1);
-
+        // 1) calling our helper to fetch jobs from Adzuna
+        const results: AdzunaJob[] = await searchJobs("junior developer", 1);
+        // 2) mapping API fields into our UI shape (JobCard)
         const mapped: JobCard[] = results.map((j) => ({
           id: j.id,
           title: j.title,
@@ -45,7 +45,7 @@ export default function jobsScreen() {
           postedAt: j.created,
           url: j.redirect_url,
         }));
-
+        // 3) rendering them
         setJobs(mapped);
       } catch (e) {
         console.log("API error:", e);
@@ -77,9 +77,13 @@ export default function jobsScreen() {
           {jobs.map((item) => (
             <View key={item.id} style={s.card}>
               <Text style={s.title}>{item.title}</Text>
-              <Text style={s.sub}>{item.company} • {item.location}</Text>
+              <Text style={s.sub}>
+                {item.company} • {item.location}
+              </Text>
               <Text style={s.body}>
-                {item.url ? "Tap Save to remember this posting." : "Job from Adzuna."}
+                {item.url
+                  ? "Tap Save to remember this posting."
+                  : "Job from Adzuna."}
               </Text>
 
               <View style={s.cardRow}>
@@ -88,9 +92,13 @@ export default function jobsScreen() {
                   disabled={isSaved(item.id)}
                   style={[s.btn, isSaved(item.id) && { backgroundColor: "#9CA3AF" }]}
                 >
-                  <Text style={s.btnText}>{isSaved(item.id) ? "Saved" : "Save Job"}</Text>
+                  <Text style={s.btnText}>
+                    {isSaved(item.id) ? "Saved" : "Save Job"}
+                  </Text>
                 </Pressable>
-                <Text style={s.posted}>Posted: {item.postedAt ? item.postedAt.slice(0, 10) : "—"}</Text>
+                <Text style={s.posted}>
+                  Posted: {item.postedAt ? item.postedAt.slice(0, 10) : "—"}
+                </Text>
               </View>
             </View>
           ))}

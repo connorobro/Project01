@@ -68,13 +68,16 @@ export default function HomeScreen() {
   const [category, setCategory] = React.useState<string | null>(null);
   const openMenu = () => setMenuVisible(true);
   const closeMenu = () => setMenuVisible(false);
+
   const { userToken, username, logout } = useContext(AuthContext);
   const router = useRouter();
 
-  if (!userToken) {
-    router.replace("/Login");
-    return null;
-  }
+  // Early return for unauthenticated users
+  React.useEffect(() => {
+    if (!userToken) {
+      router.replace("/Login");
+    }
+  }, [userToken, router]);
 
   return (
     <Provider>
