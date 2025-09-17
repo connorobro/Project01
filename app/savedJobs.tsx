@@ -1,95 +1,93 @@
-import { Stack } from "expo-router";
-import { Linking, Pressable, Text, View } from "react-native";
+import { useRouter } from "expo-router";
+import React, { useCallback } from "react";
+import { FlatList, Linking, Pressable, Text, TouchableOpacity, View } from "react-native";
 import { useSavedJobs } from "../src/utils/SavedJobsContext";
 
-export default function SavedJobs() {
-  // "saved" is the array of jobs we added from the Jobs page
-  const { saved = [], remove } = useSavedJobs();
+async function openJobUrl(url?: string) {
+  if (!url) return;
+  try {
+    const can = await Linking.canOpenURL(url);
+    if (can) await Linking.openURL(url);
+  } catch {
+  }
+}
 
-  return (
-    <View style={{ flex: 1, backgroundColor: "#111827", padding: 16 }}>
-      <Stack.Screen options={{ title: "Saved Jobs" }} />
-      <Text
+export default function SavedJobsScreen() {
+  const { saved, remove } = useSavedJobs();
+  const router = useRouter();
+
+  const renderItem = useCallback(
+    ({ item }: any) => (
+      <View
         style={{
-          color: "white",
-          fontSize: 24,
-          fontWeight: "800",
-          marginBottom: 12,
+          marginHorizontal: 16,
+          marginVertical: 8,
+          padding: 12,
+          borderWidth: 1,
+          borderRadius: 10,
         }}
       >
-        Saved Jobs
-      </Text>
+        <Text style={{ fontWeight: "bold", fontSize: 16 }}>{item.title}</Text>
+        {!!item.company && <Text>{item.company}</Text>}
+        {!!item.location && <Text>{item.location}</Text>}
 
-      {saved.length === 0 ? (
-        <>
-          <CardPlaceholder />
-          <CardPlaceholder />
-        </>
-      ) : (
-        saved.map((j) => (
-          <View
-            key={j.id}
+        <View style={{ flexDirection: "row", gap: 16, marginTop: 10 }}>
+          {item.url ? (
+            <Pressable onPress={() => openJobUrl(item.url)}>
+              <Text style={{ color: "#0ea5a4", textDecorationLine: "underline" }}>
+                View Job Posting
+              </Text>
+            </Pressable>
+          ) : (
+            <Text style={{ opacity: 0.6 }}>No direct link</Text>
+          )}
+
+          <TouchableOpacity
+            onPress={() => remove(item.id)}
             style={{
-              backgroundColor: "#1f2937",
-              borderRadius: 12,
-              padding: 14,
+              paddingHorizontal: 12,
+              paddingVertical: 8,
               borderWidth: 1,
-              borderColor: "#374151",
-              marginBottom: 10,
+              borderRadius: 8,
+              marginLeft: "auto",
             }}
           >
-            <Text style={{ color: "white", fontWeight: "800" }}>{j.title}</Text>
-            <Text style={{ color: "#cbd5e1", marginTop: 4 }}>
-              {j.company} • {j.location}
-            </Text>
-            {/* Add job link */}
-            {j.url && (
-              <Pressable
-                onPress={() => Linking.openURL(j.url || "underfined")}
-                style={{ marginTop: 8, alignSelf: "flex-start" }}
-              >
-                <Text
-                  style={{ color: "#0ea5a4", textDecorationLine: "underline" }}
-                >
-                  View Job Posting
-                </Text>
-              </Pressable>
-            )}
-            <Pressable
-              onPress={() => remove(j.id)}
-              style={{
-                marginTop: 8,
-                alignSelf: "flex-start",
-                backgroundColor: "#ef4444",
-                padding: 8,
-                borderRadius: 8,
-              }}
-            >
-              <Text style={{ color: "white", fontWeight: "700" }}>Remove</Text>
-            </Pressable>
-          </View>
-        ))
-      )}
+            <Text>Remove</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    ),
+    [remove]
+  );
+
+  return (
+    <View style={{ flex: 1 }}>
+      <View
+        style={{
+          paddingHorizontal: 16,
+          paddingVertical: 12,
+          borderBottomWidth: 1,
+          flexDirection: "row",
+          alignItems: "center",
+        }}
+      >
+        <Pressable onPress={() => router.back()}>
+          <Text style={{ textDecorationLine: "underline" }}>‹ Back</Text>
+        </Pressable>
+        <Text style={{ marginLeft: 12, fontSize: 18, fontWeight: "600" }}>
+          Saved Jobs
+        </Text>
+      </View>
+
+      <FlatList
+        data={saved}
+        keyExtractor={(item) => item.id}
+        ListEmptyComponent={
+          <Text style={{ textAlign: "center", marginTop: 24 }}>No saved jobs yet.</Text>
+        }
+        renderItem={renderItem}
+      />
     </View>
   );
 }
 
-function CardPlaceholder() {
-  return (
-    <View
-      style={{
-        backgroundColor: "#1f2937",
-        borderRadius: 12,
-        padding: 14,
-        borderWidth: 1,
-        borderColor: "#374151",
-        marginBottom: 10,
-      }}
-    >
-      <Text style={{ color: "white", fontWeight: "800" }}>
-        Saved Job (placeholder)
-      </Text>
-      <Text style={{ color: "#cbd5e1", marginTop: 4 }}>Company • Location</Text>
-    </View>
-  );
-}
