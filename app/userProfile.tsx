@@ -1,5 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useRouter } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import React, { useState } from "react";
 import { Button, StyleSheet, Text, TextInput, View } from "react-native";
 import { AuthContext } from "../context/AuthProvider";
@@ -55,6 +55,8 @@ export default function UserProfile() {
 
   return (
     <View style={styles.container}>
+        <Link href="/Home" style={styles.button}>Home</Link>
+
       <Text style={styles.header}>Edit User Profile</Text>
       <View style={styles.fieldContainer}>
         <Text style={styles.label}>Username:</Text>
@@ -88,6 +90,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#25292e",
+    // backgroundColor: "#041b1fff", 
+
     justifyContent: "center",
     alignItems: "center",
     padding: 24,
@@ -115,4 +119,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 4,
   },
+  button:{
+    backgroundColor: 'rgba(11, 104, 191, 0.87)',
+    color: 'white',
+    margin: 25,
+    padding: 15,
+    borderRadius: 10
+  }
 });
