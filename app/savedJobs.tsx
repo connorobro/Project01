@@ -1,5 +1,5 @@
 import { Stack } from "expo-router";
-import { Pressable, Text, View } from "react-native";
+import { Linking, Pressable, Text, View } from "react-native";
 import { useSavedJobs } from "../src/utils/SavedJobsContext";
 
 export default function SavedJobs() {
@@ -9,7 +9,14 @@ export default function SavedJobs() {
   return (
     <View style={{ flex: 1, backgroundColor: "#111827", padding: 16 }}>
       <Stack.Screen options={{ title: "Saved Jobs" }} />
-      <Text style={{ color: "white", fontSize: 24, fontWeight: "800", marginBottom: 12 }}>
+      <Text
+        style={{
+          color: "white",
+          fontSize: 24,
+          fontWeight: "800",
+          marginBottom: 12,
+        }}
+      >
         Saved Jobs
       </Text>
 
@@ -20,17 +27,43 @@ export default function SavedJobs() {
         </>
       ) : (
         saved.map((j) => (
-          <View key={j.id} style={{
-            backgroundColor: "#1f2937", borderRadius: 12, padding: 14,
-            borderWidth: 1, borderColor: "#374151", marginBottom: 10
-          }}>
+          <View
+            key={j.id}
+            style={{
+              backgroundColor: "#1f2937",
+              borderRadius: 12,
+              padding: 14,
+              borderWidth: 1,
+              borderColor: "#374151",
+              marginBottom: 10,
+            }}
+          >
             <Text style={{ color: "white", fontWeight: "800" }}>{j.title}</Text>
             <Text style={{ color: "#cbd5e1", marginTop: 4 }}>
               {j.company} • {j.location}
             </Text>
+            {/* Add job link */}
+            {j.url && (
+              <Pressable
+                onPress={() => Linking.openURL(j.url || "underfined")}
+                style={{ marginTop: 8, alignSelf: "flex-start" }}
+              >
+                <Text
+                  style={{ color: "#0ea5a4", textDecorationLine: "underline" }}
+                >
+                  View Job Posting
+                </Text>
+              </Pressable>
+            )}
             <Pressable
               onPress={() => remove(j.id)}
-              style={{ marginTop: 8, alignSelf: "flex-start", backgroundColor: "#ef4444", padding: 8, borderRadius: 8 }}
+              style={{
+                marginTop: 8,
+                alignSelf: "flex-start",
+                backgroundColor: "#ef4444",
+                padding: 8,
+                borderRadius: 8,
+              }}
             >
               <Text style={{ color: "white", fontWeight: "700" }}>Remove</Text>
             </Pressable>
@@ -43,11 +76,19 @@ export default function SavedJobs() {
 
 function CardPlaceholder() {
   return (
-    <View style={{
-      backgroundColor: "#1f2937", borderRadius: 12, padding: 14,
-      borderWidth: 1, borderColor: "#374151", marginBottom: 10
-    }}>
-      <Text style={{ color: "white", fontWeight: "800" }}>Saved Job (placeholder)</Text>
+    <View
+      style={{
+        backgroundColor: "#1f2937",
+        borderRadius: 12,
+        padding: 14,
+        borderWidth: 1,
+        borderColor: "#374151",
+        marginBottom: 10,
+      }}
+    >
+      <Text style={{ color: "white", fontWeight: "800" }}>
+        Saved Job (placeholder)
+      </Text>
       <Text style={{ color: "#cbd5e1", marginTop: 4 }}>Company • Location</Text>
     </View>
   );
