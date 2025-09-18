@@ -126,11 +126,10 @@ export default function Login() {
     </KeyboardAvoidingView>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#25292e",
+    backgroundColor: "#FFFFFF",
   },
   scrollContent: {
     flexGrow: 1,
@@ -139,19 +138,19 @@ const styles = StyleSheet.create({
   formContainer: {
     padding: 20,
     margin: 20,
-    backgroundColor: "#1a1d21",
+    backgroundColor: "#003459",
     borderRadius: 10,
   },
   title: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "#fff",
+    color: "#00A7E1",
     textAlign: "center",
     marginBottom: 30,
   },
   input: {
-    backgroundColor: "#2a2d32",
-    color: "#fff",
+    backgroundColor: "#00171F",
+    color: "#00A7E1",
     paddingHorizontal: 15,
     paddingVertical: 12,
     borderRadius: 8,
@@ -164,28 +163,28 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   successFeedback: {
-    backgroundColor: "#4CAF50",
+    backgroundColor: "#007EA7",
   },
   errorFeedback: {
-    backgroundColor: "#FF3B30",
+    backgroundColor: "#003459",
   },
   feedbackText: {
-    color: "#fff",
+    color: "#FFFFFF",
     textAlign: "center",
     fontSize: 14,
     fontWeight: "500",
   },
   button: {
-    backgroundColor: "#007AFF",
+    backgroundColor: "#00A7E1",
     paddingVertical: 15,
     borderRadius: 8,
     marginTop: 10,
   },
   buttonDisabled: {
-    backgroundColor: "#555",
+    backgroundColor: "#007EA7",
   },
   buttonText: {
-    color: "#fff",
+    color: "#00171F",
     textAlign: "center",
     fontSize: 16,
     fontWeight: "bold",
@@ -194,7 +193,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   linkText: {
-    color: "#007AFF",
+    color: "#00A7E1",
     textAlign: "center",
     fontSize: 14,
   },
