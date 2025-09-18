@@ -49,7 +49,11 @@ const styles = StyleSheet.create({
   },
   button: {
     fontSize: 20,
-    textDecorationLine: "underline",
+    margin:10,
+    backgroundColor: "#007AFF",
+    borderRadius: 10,
+    padding: 15,
+    // textDecorationLine: "underline",
     color: "#fff",
   },
 });
