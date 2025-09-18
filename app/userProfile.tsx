@@ -1,5 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Link, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import { Button, StyleSheet, Text, TextInput, View } from "react-native";
 import { AuthContext } from "../context/AuthProvider";
@@ -55,33 +55,51 @@ export default function UserProfile() {
 
   return (
     <View style={styles.container}>
-        <Link href="/Home" style={styles.button}>Home</Link>
 
-      <Text style={styles.header}>Edit User Profile</Text>
-      <View style={styles.fieldContainer}>
-        <Text style={styles.label}>Username:</Text>
-        <TextInput
-          style={styles.input}
-          value={username}
-          editable={editing}
-          onChangeText={setUsername}
-          placeholder="Enter new username"
+      {/* inner container  */}
+      {/* <View style={{width:'15%',backgroundColor: 'white', alignContent: "center",}}> */}
+      {/* <Link href="/Home" style={styles.button}>Home</Link> */}
+      {/* </View> */}
+      <View style={{flexDirection: 'column',}}>
+        <View style={{alignItems: 'center',borderRadius:100,margin:10,padding: 5,width: 150, height: 150, backgroundColor: "rgba(87, 120, 129, 1)"}}>
+          <Text style={{fontWeight: "900",color: 'white',}}>Photo</Text>
+        </View>
+        <View style={{alignItems: 'flex-start',width: 200, height: 200,borderRadius: 20, backgroundColor: 'rgba(154, 187, 203, 0.33)', marginTop: 20}}>
+          <Text style={styles.text}>Name:  </Text>
+          <Text style={styles.text}>Title: </Text>
+          <Text style={styles.text}>User Id</Text>
+
+        </View>
+      </View>
+      <View style={{flexDirection:"column"}}>
+        <Text style={styles.header}>Edit User Profile</Text>
+        {/* <Text style={styles.header}>Edit User Credentials</Text> */}
+
+        <View style={styles.fieldContainer}>
+          <Text style={styles.label}>Username:</Text>
+          <TextInput
+            style={styles.input}
+            value={username}
+            editable={editing}
+            onChangeText={setUsername}
+            placeholder="Enter new username"
+          />
+        </View>
+        <View style={styles.fieldContainer}>
+          <Text style={styles.label}>Password:</Text>
+          <TextInput
+            style={styles.input}
+            value={password}
+            editable={editing}
+            onChangeText={setPassword}
+            placeholder="Enter new password"
+          />
+        </View>
+        <Button
+          title={editing ? "Save" : "Edit"}
+          onPress={editing ? handleSave : () => setEditing(true)}
         />
       </View>
-      <View style={styles.fieldContainer}>
-        <Text style={styles.label}>Password:</Text>
-        <TextInput
-          style={styles.input}
-          value={password}
-          editable={editing}
-          onChangeText={setPassword}
-          placeholder="Enter new password"
-        />
-      </View>
-      <Button
-        title={editing ? "Save" : "Edit"}
-        onPress={editing ? handleSave : () => setEditing(true)}
-      />
     </View>
   );
 }
@@ -89,17 +107,19 @@ export default function UserProfile() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    flexDirection: 'row',
     backgroundColor: "#25292e",
-    // backgroundColor: "#041b1fff", 
-
-    justifyContent: "center",
+    // backgroundColor: 'rgba(130, 146, 154, 0.9)',
+    justifyContent: "space-evenly",
     alignItems: "center",
     padding: 24,
   },
   header: {
     fontSize: 28,
     fontWeight: "bold",
-    color: "#fff",
+    // color: "#fff",
+    color: "#bcc0e2ff",
+
     marginBottom: 32,
   },
   fieldContainer: {
@@ -113,17 +133,31 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   input: {
-    backgroundColor: "#fff",
+    // backgroundColor: "#fff",
+    backgroundColor: "rgba(198, 200, 206, 1)",
     borderRadius: 8,
     padding: 12,
     fontSize: 16,
     marginBottom: 4,
   },
   button:{
-    backgroundColor: 'rgba(11, 104, 191, 0.87)',
+    backgroundColor: 'rgba(113, 146, 177, 0.87)',
     color: 'white',
-    margin: 25,
+    // margin: 25,
     padding: 15,
-    borderRadius: 10
+    borderRadius: 10,
+    textAlign: 'center',
+    fontWeight: 'bold',
+    marginTop: 0,
+    // alignItems: "center"
+  },
+  text:{
+    fontSize: 20,
+    fontWeight: '900',
+    color: "rgba(231, 242, 245, 1)",
+    alignContent: 'center',
+    textAlign: 'center',
+    margin: 5,
+    // justifyContent: 'center'
   }
 });
