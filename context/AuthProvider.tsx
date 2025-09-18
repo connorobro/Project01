@@ -8,6 +8,7 @@ type AuthContextType = {
   logout: () => Promise<void>;
   username: string | null;
   password: string | null;
+  isLoading: boolean;
 };
 
 export const AuthContext = createContext<AuthContextType>({
@@ -16,6 +17,7 @@ export const AuthContext = createContext<AuthContextType>({
   password: null,
   login: async () => {},
   logout: async () => {},
+  isLoading: true,
 });
 
 type AuthProviderProps = {
@@ -26,6 +28,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [userToken, setUserToken] = useState<string | null>(null);
   const [username, setUsername] = useState<string | null>(null);
   const [password, setPassword] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   // Load token and username from AsyncStorage on mount
   React.useEffect(() => {
     const loadUserData = async () => {
@@ -35,6 +38,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       setUserToken(token);
       setUsername(username);
       setPassword(password);
+      setIsLoading(false);
     };
     loadUserData();
   }, []);
@@ -46,6 +50,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     setUserToken(token);
     setUsername(username);
     setPassword(password);
+    setIsLoading(false);
     console.log("User logged in:", username);
     console.log("Password Auth:", password);
   };
@@ -62,7 +67,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   return (
     <AuthContext.Provider
-      value={{ userToken, username, password, login, logout }}
+      value={{ userToken, username, password, login, logout, isLoading }}
     >
       {children}
     </AuthContext.Provider>
