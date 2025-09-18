@@ -74,12 +74,12 @@ export default function HomeScreen() {
   const { userToken, username, logout } = useContext(AuthContext);
   const router = useRouter();
 
-  // Early return for unauthenticated users
-  React.useEffect(() => {
-    if (!userToken) {
-      router.replace("/");
-    }
-  }, [userToken, router]);
+  // // Early return for unauthenticated users
+  // React.useEffect(() => {
+  //   if (!userToken) {
+  //     router.replace("/");
+  //   }
+  // }, [userToken, router]);
 
   return (
     <Provider>
