@@ -35,8 +35,6 @@ export default function JobsScreen() {
       try {
         setLoading(true);
         const results: AdzunaJob[] = await searchJobs(query, 1);
-        // 1) calling our helper to fetch jobs from Adzuna
-        // 2) mapping API fields into our UI shape (JobCard)
         const mapped: JobCard[] = results.map((j) => ({
           id: j.id,
           title: j.title,
@@ -45,7 +43,6 @@ export default function JobsScreen() {
           postedAt: j.created,
           url: j.redirect_url,
         }));
-        // 3) rendering them
         setJobs(mapped);
       } catch (e) {
         console.log("API error:", e);
@@ -83,9 +80,6 @@ export default function JobsScreen() {
                 {item.company} • {item.location}
               </Text>
               <Text style={s.body}>
-                {item.url
-                  ? "Tap Save to remember this posting."
-                  : "Job from Adzuna."}
                 <TouchableOpacity
                   onPress={() => Linking.openURL(item.url || "underfined")}
                 >
@@ -103,7 +97,7 @@ export default function JobsScreen() {
                   ]}
                 >
                   <Text style={s.btnText}>
-                    {isSaved(item.id) ? "Saved" : "Save Job"}
+                    {isSaved(item.id) ? "♥︎" : "♡"}
                   </Text>
                 </Pressable>
                 <Text style={s.posted}>
