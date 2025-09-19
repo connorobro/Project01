@@ -1,10 +1,11 @@
+// app/Home.tsx
+import AsyncStorage from "@react-native-async-storage/async-storage"; // ⬅️ NEW
 import { Link, useRouter } from "expo-router";
 import * as React from "react";
-import { useContext } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 import { Button, Menu, Provider } from "react-native-paper";
-import { AuthContext } from "../context/AuthProvider";
+import { useAuth } from "../src/utils/AuthContext"; // ⬅️ already used below
 
 const DropdownCategory = ({
   category,
@@ -15,23 +16,18 @@ const DropdownCategory = ({
 }) => {
   const [value, setValue] = React.useState<string | null>(null);
   const [isFocus, setIsFocus] = React.useState(false);
-  const [data, setData] = React.useState<{ label: string; value: string }[]>(
-    []
-  );
+  const [data, setData] = React.useState<{ label: string; value: string }[]>([]);
 
-  // fetching Adzuna categories
   React.useEffect(() => {
     fetch(
       `https://api.adzuna.com/v1/api/jobs/us/categories?app_id=${process.env.EXPO_PUBLIC_ADZUNA_APP_ID}&app_key=${process.env.EXPO_PUBLIC_ADZUNA_API_KEY}`
     )
-      .then((response) => response.json())
+      .then((r) => r.json())
       .then((json) => {
-        const formatted = (json.results || []).map(
-          (item: { label: string; tag: string }) => ({
-            label: item.label,
-            value: item.tag,
-          })
-        );
+        const formatted = (json.results || []).map((item: { label: string; tag: string }) => ({
+          label: item.label,
+          value: item.tag,
+        }));
         setData(formatted);
       })
       .catch((err) => console.error("Error fetching categories:", err));
@@ -71,15 +67,36 @@ export default function HomeScreen() {
   const openMenu = () => setMenuVisible(true);
   const closeMenu = () => setMenuVisible(false);
 
-  const { userToken, username, logout } = useContext(AuthContext);
+  const { logout, currentUserId } = useAuth();
   const router = useRouter();
 
-  // // Early return for unauthenticated users
-  // React.useEffect(() => {
-  //   if (!userToken) {
-  //     router.replace("/");
-  //   }
-  // }, [userToken, router]);
+  // ⬇️ NEW: show the username in the top-right button
+  const [displayName, setDisplayName] = React.useState<string>("");
+
+  React.useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      // try the fast path first (your Login/Register already save this)
+      const cached = await AsyncStorage.getItem("currentUser");
+      if (cached) {
+        const u = JSON.parse(cached);
+        if (!cancelled) setDisplayName(u?.username ?? "");
+      }
+
+      // source of truth: look up by id in "users" array
+      if (currentUserId) {
+        const raw = await AsyncStorage.getItem("users");
+        const users = raw ? JSON.parse(raw) : [];
+        const me = users.find((u: any) => String(u.id) === String(currentUserId));
+        if (!cancelled) setDisplayName(me?.username ?? "");
+      } else {
+        if (!cancelled) setDisplayName("");
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [currentUserId]);
 
   return (
     <Provider>
@@ -95,14 +112,16 @@ export default function HomeScreen() {
             onDismiss={closeMenu}
             anchor={
               <Button mode="contained" onPress={openMenu} style={styles.button}>
-                {username || "User"}
+                {/* ⬇️ show username (fallback to “Menu” if not loaded yet) */}
+                {displayName ? displayName : "Menu"}
               </Button>
             }
           >
             <Menu.Item
-              onPress={() => {
+              onPress={async () => {
                 closeMenu();
-                logout();
+                await logout();
+                router.replace("/Login");
               }}
               title="Logout"
             />
@@ -117,27 +136,16 @@ export default function HomeScreen() {
         </View>
 
         {/* main content */}
-        <View
-          style={{
-            flexDirection: "row",
-            marginTop: 80,
-            justifyContent: "center",
-          }}
-        >
+        <View style={{ flexDirection: "row", marginTop: 80, justifyContent: "center" }}>
           <View style={{ width: 180, marginRight: 16, alignItems: "center" }}>
             <Text style={styles.text}>Choose Job Category</Text>
             <DropdownCategory category={category} setCategory={setCategory} />
           </View>
         </View>
 
-        {/* spacer */}
         <View style={{ height: 40 }} />
 
-        {/* pass category as q param */}
-        <Link
-          href={{ pathname: "/jobs", params: { q: category ?? "" } }}
-          style={styles.button}
-        >
+        <Link href={{ pathname: "/jobs", params: { q: category ?? "" } }} style={styles.button}>
           Search Jobs
         </Link>
       </View>
@@ -146,21 +154,8 @@ export default function HomeScreen() {
 }
 
 const dropdownStyles = StyleSheet.create({
-  container: {
-    backgroundColor: "white",
-    padding: 16,
-    borderRadius: 10,
-    marginTop: 10,
-  },
-  dropdown: {
-    height: 60,
-    minWidth: 160,
-    borderColor: "gray",
-    borderWidth: 0.5,
-    borderRadius: 8,
-    paddingHorizontal: 16,
-    fontSize: 20,
-  },
+  container: { backgroundColor: "white", padding: 16, borderRadius: 10, marginTop: 10 },
+  dropdown: { height: 60, minWidth: 160, borderColor: "gray", borderWidth: 0.5, borderRadius: 8, paddingHorizontal: 16, fontSize: 20 },
   placeholderStyle: { fontSize: 20 },
   selectedTextStyle: { fontSize: 20 },
   iconStyle: { width: 20, height: 20 },
@@ -168,17 +163,10 @@ const dropdownStyles = StyleSheet.create({
 });
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#25292e",
-    justifyContent: "center",
-    alignItems: "center",
-  },
+  container: { flex: 1, backgroundColor: "#25292e", justifyContent: "center", alignItems: "center" },
   topBar: {
     position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
+    top: 0, left: 0, right: 0,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "flex-start",
@@ -188,11 +176,6 @@ const styles = StyleSheet.create({
     zIndex: 10,
   },
   text: { color: "white" },
-  button: {
-    backgroundColor: "#4CAF50",
-    padding: 12,
-    borderRadius: 8,
-    minWidth: 160,
-    alignItems: "center",
-  },
+  button: { backgroundColor: "#4CAF50", padding: 12, borderRadius: 8, minWidth: 160, alignItems: "center" },
 });
+

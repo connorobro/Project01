@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import {
   KeyboardAvoidingView,
   Platform,
@@ -11,7 +11,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { AuthContext } from "../context/AuthProvider";
+import { useAuth } from "../src/utils/AuthContext";
 
 export default function Login() {
   const [username, setUsername] = useState("");
@@ -19,8 +19,7 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [feedback, setFeedback] = useState("");
   const router = useRouter();
-
-  const { login } = useContext(AuthContext);
+  const { login } = useAuth();
 
   const handleLogin = async () => {
     setFeedback("");
@@ -41,17 +40,17 @@ export default function Login() {
         (u: any) => u.username === username && u.password === password
       );
       if (user) {
-        await login("someTokenValue", user.username, user.password); // Replace "someTokenValue" with a real token if you have one
-        setFeedback("Login successful! Welcome back!");
+        // ⬇️ tell the app which user is logged in (persists across restarts)
+        await login(String(user.id));
 
+        // (optional) keep your legacy flags if you still use them elsewhere
         await AsyncStorage.setItem("currentUser", JSON.stringify(user));
         await AsyncStorage.setItem("isLoggedIn", "true");
 
         setFeedback("Login successful! Welcome back!");
-
         setTimeout(() => {
           router.replace("/Home");
-        }, 1500);
+        }, 800);
       } else {
         setFeedback("Invalid username or password");
       }
