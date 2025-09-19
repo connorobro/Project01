@@ -1,6 +1,6 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useRouter } from "expo-router";
+import React, { useState } from "react";
 import {
   KeyboardAvoidingView,
   Platform,
@@ -9,46 +9,49 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  View
-} from 'react-native';
+  View,
+} from "react-native";
+import { AuthContext } from "../context/AuthProvider";
 
 export default function Register() {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [feedback, setFeedback] = useState('');
-  const router = useRouter();   
+  const [feedback, setFeedback] = useState("");
+  const router = useRouter();
+
+  const { register } = React.useContext(AuthContext);
 
   const handleRegister = async () => {
-    setFeedback('');
+    setFeedback("");
 
     if (!username.trim() || !password.trim()) {
-      setFeedback('Please fill in all fields');
+      setFeedback("Please fill in all fields");
       return;
     }
 
     if (password !== confirmPassword) {
-      setFeedback('Passwords do not match');
+      setFeedback("Passwords do not match");
       return;
     }
 
     if (password.length < 6) {
-      setFeedback('Password must be at least 6 characters');
+      setFeedback("Password must be at least 6 characters");
       return;
     }
 
     setLoading(true);
-    setFeedback('Creating account...');
+    setFeedback("Creating account...");
 
     try {
-      const existingUsers = await AsyncStorage.getItem('users');
+      const existingUsers = await AsyncStorage.getItem("users");
       const users = existingUsers ? JSON.parse(existingUsers) : [];
-      
+
       const userExists = users.find((user: any) => user.username === username);
 
       if (userExists) {
-        setFeedback('Username already exists');
+        setFeedback("Username already exists");
         setLoading(false);
         return;
       }
@@ -57,37 +60,38 @@ export default function Register() {
         id: Date.now().toString(),
         username,
         password,
-        createdAt: new Date().toISOString()
+        createdAt: new Date().toISOString(),
       };
 
       users.push(newUser);
-      await AsyncStorage.setItem('users', JSON.stringify(users));
-      await AsyncStorage.setItem('currentUser', JSON.stringify(newUser));
-      await AsyncStorage.setItem('isLoggedIn', 'true');
+      await register("someTokenValue", newUser.username, newUser.password); // Replace with actual token generation
 
-      setFeedback('Account created successfully! Redirecting...');
-      
+      await AsyncStorage.setItem("users", JSON.stringify(users));
+      await AsyncStorage.setItem("currentUser", JSON.stringify(newUser));
+      await AsyncStorage.setItem("isLoggedIn", "true");
+
+      setFeedback("Account created successfully! Redirecting...");
+
       setTimeout(() => {
-        router.replace('/Home');
+        router.replace("/Home");
       }, 1500);
-
     } catch (error) {
-      console.error('Registration error:', error);
-      setFeedback('Failed to create account. Please try again.');
+      console.error("Registration error:", error);
+      setFeedback("Failed to create account. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <KeyboardAvoidingView 
+    <KeyboardAvoidingView
       style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.formContainer}>
           <Text style={styles.title}>Create Account</Text>
-          
+
           <TextInput
             style={styles.input}
             placeholder="Username"
@@ -116,27 +120,31 @@ export default function Register() {
           />
 
           {feedback ? (
-            <View style={[
-              styles.feedbackContainer, 
-              feedback.includes('successfully') ? styles.successFeedback : styles.errorFeedback
-            ]}>
+            <View
+              style={[
+                styles.feedbackContainer,
+                feedback.includes("successfully")
+                  ? styles.successFeedback
+                  : styles.errorFeedback,
+              ]}
+            >
               <Text style={styles.feedbackText}>{feedback}</Text>
             </View>
           ) : null}
 
-          <TouchableOpacity 
+          <TouchableOpacity
             style={[styles.button, loading && styles.buttonDisabled]}
             onPress={handleRegister}
             disabled={loading}
           >
             <Text style={styles.buttonText}>
-              {loading ? 'Creating Account...' : 'Register'}
+              {loading ? "Creating Account..." : "Register"}
             </Text>
           </TouchableOpacity>
 
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.linkButton}
-            onPress={() => router.push('/Login')}
+            onPress={() => router.push("/Login")}
           >
             <Text style={styles.linkText}>
               Already have an account? Login here
@@ -151,28 +159,28 @@ export default function Register() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#25292e',
+    backgroundColor: "#25292e",
   },
   scrollContent: {
     flexGrow: 1,
-    justifyContent: 'center',
+    justifyContent: "center",
   },
   formContainer: {
     padding: 20,
     margin: 20,
-    backgroundColor: '#1a1d21',
+    backgroundColor: "#1a1d21",
     borderRadius: 10,
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
-    color: '#fff',
-    textAlign: 'center',
+    fontWeight: "bold",
+    color: "#fff",
+    textAlign: "center",
     marginBottom: 30,
   },
   input: {
-    backgroundColor: '#2a2d32',
-    color: '#fff',
+    backgroundColor: "#2a2d32",
+    color: "#fff",
     paddingHorizontal: 15,
     paddingVertical: 12,
     borderRadius: 8,
@@ -185,38 +193,38 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   successFeedback: {
-    backgroundColor: '#4CAF50',
+    backgroundColor: "#4CAF50",
   },
   errorFeedback: {
-    backgroundColor: '#FF3B30',
+    backgroundColor: "#FF3B30",
   },
   feedbackText: {
-    color: '#fff',
-    textAlign: 'center',
+    color: "#fff",
+    textAlign: "center",
     fontSize: 14,
-    fontWeight: '500',
+    fontWeight: "500",
   },
   button: {
-    backgroundColor: '#007AFF',
+    backgroundColor: "#007AFF",
     paddingVertical: 15,
     borderRadius: 8,
     marginTop: 10,
   },
   buttonDisabled: {
-    backgroundColor: '#555',
+    backgroundColor: "#555",
   },
   buttonText: {
-    color: '#fff',
-    textAlign: 'center',
+    color: "#fff",
+    textAlign: "center",
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   linkButton: {
     marginTop: 20,
   },
   linkText: {
-    color: '#007AFF',
-    textAlign: 'center',
+    color: "#007AFF",
+    textAlign: "center",
     fontSize: 14,
   },
 });
