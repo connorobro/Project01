@@ -15,7 +15,7 @@ export default function Index() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Hello React</Text>
+      <Text style={styles.text}>Job Listing</Text>
       <Link href="./Register" style={styles.button}>
         Register
       </Link>
@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
   },
   button: {
     fontSize: 20,
-    margin:10,
+    margin: 10,
     backgroundColor: "#007AFF",
     borderRadius: 10,
     padding: 15,
