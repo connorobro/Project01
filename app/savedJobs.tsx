@@ -61,6 +61,24 @@ export default function SavedJobsScreen() {
   );
 
   return (
+    <View style={{ flex: 1 }}>
+      <View
+        style={{
+          paddingHorizontal: 16,
+          paddingVertical: 12,
+          borderBottomWidth: 1,
+          flexDirection: "row",
+          alignItems: "center",
+        }}
+      >
+        <Pressable onPress={() => router.back()}>
+          <Text style={{ textDecorationLine: "underline" }}>‹ Back</Text>
+        </Pressable>
+        <Text style={{ marginLeft: 12, fontSize: 18, fontWeight: "600" }}>
+          Saved Jobs
+        </Text>
+      </View>
+
       <FlatList
         data={saved}
         keyExtractor={(item) => item.id}
@@ -69,6 +87,7 @@ export default function SavedJobsScreen() {
         }
         renderItem={renderItem}
       />
+    </View>
   );
 }
 
