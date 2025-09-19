@@ -12,6 +12,7 @@ import {
 } from "react-native";
 import { useSavedJobs } from "../src/utils/SavedJobsContext";
 import { AdzunaJob, searchJobs } from "../src/utils/adzuna";
+
 type JobCard = {
   id: string;
   title: string;
@@ -20,6 +21,14 @@ type JobCard = {
   postedAt?: string;
   url?: string;
 };
+
+async function openJobUrl(url?: string) {
+  if (!url) return;
+  try {
+    const can = await Linking.canOpenURL(url);
+    if (can) await Linking.openURL(url);
+  } catch {}
+}
 
 export default function JobsScreen() {
   const { q } = useLocalSearchParams<{ q?: string }>();
@@ -36,7 +45,7 @@ export default function JobsScreen() {
         setLoading(true);
         const results: AdzunaJob[] = await searchJobs(query, 1);
         const mapped: JobCard[] = results.map((j) => ({
-          id: j.id,
+          id: String(j.id),
           title: j.title,
           company: j.company?.display_name ?? "Unknown",
           location: j.location?.display_name ?? "Unknown",
@@ -52,10 +61,10 @@ export default function JobsScreen() {
       }
     })();
   }, [query]);
+
   return (
     <SafeAreaView style={s.screen}>
       <View style={s.wrap}>
-        {/* Navbar */}
         <View style={s.row}>
           <Text style={s.h1}>Job Listings</Text>
           <Pressable style={s.pill} onPress={() => router.push("/savedJobs")}>
@@ -63,15 +72,10 @@ export default function JobsScreen() {
           </Pressable>
         </View>
 
-        {/* small hint showing the current query */}
-        <View style={s.input}>
-          <Text style={s.muted}>Showing results for: {query}</Text>
-        </View>
+      <View style={s.listSpacer} />
 
-        <ScrollView contentContainerStyle={{ paddingBottom: 28 }}>
-          {loading && (
-            <Text style={{ color: "#6b7280", marginBottom: 10 }}>Loading…</Text>
-          )}
+  <ScrollView contentContainerStyle={{ paddingBottom: 28 }}>
+          {loading && <Text style={{ color: "#6b7280", marginBottom: 10 }}>Loading…</Text>}
 
           {jobs.map((item) => (
             <View key={item.id} style={s.card}>
@@ -79,26 +83,26 @@ export default function JobsScreen() {
               <Text style={s.sub}>
                 {item.company} • {item.location}
               </Text>
-              <Text style={s.body}>
+
+              <View style={{ marginTop: 8 }}>
                 <TouchableOpacity
-                  onPress={() => Linking.openURL(item.url || "underfined")}
+                  onPress={() => openJobUrl(item.url)}
+                  disabled={!item.url}
+                  style={{ opacity: item.url ? 1 : 0.4 }}
                 >
-                  <Text style={{ color: "#0ea5a4" }}>Apply!</Text>
+                  <Text style={{ color: "#0ea5a4" }}>
+                    {item.url ? "Apply!" : "No direct link"}
+                  </Text>
                 </TouchableOpacity>
-              </Text>
+              </View>
 
               <View style={s.cardRow}>
                 <Pressable
                   onPress={() => add(item)}
                   disabled={isSaved(item.id)}
-                  style={[
-                    s.btn,
-                    isSaved(item.id) && { backgroundColor: "#9CA3AF" },
-                  ]}
+                  style={[s.btn, isSaved(item.id) && { backgroundColor: "#9CA3AF" }]}
                 >
-                  <Text style={s.btnText}>
-                    {isSaved(item.id) ? "♥︎" : "♡"}
-                  </Text>
+                  <Text style={s.btnText}>{isSaved(item.id) ? "♥︎" : "♡"}</Text>
                 </Pressable>
                 <Text style={s.posted}>
                   Posted: {item.postedAt ? item.postedAt.slice(0, 10) : "—"}
@@ -119,60 +123,24 @@ export default function JobsScreen() {
 const s = StyleSheet.create({
   screen: { flex: 1, backgroundColor: "#f4f6f8" },
   wrap: { flex: 1, padding: 16 },
-  row: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
+  row: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
   h1: { fontSize: 22, fontWeight: "800" },
-
-  pill: {
-    backgroundColor: "#0ea5a4",
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 12,
-  },
+  listSpacer: { height: 16 },
+  pill: { backgroundColor: "#0ea5a4", paddingHorizontal: 12, paddingVertical: 8, borderRadius: 12 },
   pillText: { color: "#ffffff", fontWeight: "700" },
-
   input: {
-    height: 42,
-    borderRadius: 12,
-    backgroundColor: "#ffffff",
-    borderWidth: 1,
-    borderColor: "#d1fae5",
-    paddingHorizontal: 12,
-    justifyContent: "center",
-    marginTop: 10,
-    marginBottom: 12,
+    height: 42, borderRadius: 12, backgroundColor: "#ffffff", borderWidth: 1, borderColor: "#d1fae5",
+    paddingHorizontal: 12, justifyContent: "center", marginTop: 10, marginBottom: 12,
   },
   muted: { color: "#6b7280" },
-
   card: {
-    backgroundColor: "#ffffff",
-    borderRadius: 16,
-    padding: 14,
-    marginBottom: 12,
-    borderWidth: 1,
-    borderColor: "#d1fae5",
-    borderLeftWidth: 4,
-    borderLeftColor: "#2dd4bf",
+    backgroundColor: "#ffffff", borderRadius: 16, padding: 14, marginBottom: 12,
+    borderWidth: 1, borderColor: "#d1fae5", borderLeftWidth: 4, borderLeftColor: "#2dd4bf",
   },
   title: { fontSize: 16, fontWeight: "700", color: "#0f172a" },
   sub: { marginTop: 2, color: "#6b7280" },
-  body: { marginTop: 8, color: "#1f2937" },
-
-  cardRow: {
-    marginTop: 12,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  btn: {
-    backgroundColor: "#0ea5a4",
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 10,
-  },
+  cardRow: { marginTop: 12, flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
+  btn: { backgroundColor: "#0ea5a4", paddingHorizontal: 12, paddingVertical: 8, borderRadius: 10 },
   btnText: { color: "#ffffff", fontWeight: "700" },
   posted: { color: "#6b7280", width: 96, textAlign: "right" },
 });
