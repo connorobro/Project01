@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import {
   KeyboardAvoidingView,
   Platform,
@@ -11,6 +11,7 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
+import { AuthContext } from "../context/AuthProvider";
 
 export default function Register() {
   const [username, setUsername] = useState('');
@@ -18,7 +19,9 @@ export default function Register() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [feedback, setFeedback] = useState('');
-  const router = useRouter();   
+  const router = useRouter();
+
+  const { login } = useContext(AuthContext);                  
 
   const handleRegister = async () => {
     setFeedback('');
@@ -27,12 +30,10 @@ export default function Register() {
       setFeedback('Please fill in all fields');
       return;
     }
-
     if (password !== confirmPassword) {
       setFeedback('Passwords do not match');
       return;
     }
-
     if (password.length < 6) {
       setFeedback('Password must be at least 6 characters');
       return;
@@ -44,9 +45,8 @@ export default function Register() {
     try {
       const existingUsers = await AsyncStorage.getItem('users');
       const users = existingUsers ? JSON.parse(existingUsers) : [];
-      
-      const userExists = users.find((user: any) => user.username === username);
 
+      const userExists = users.find((user: any) => user.username === username);
       if (userExists) {
         setFeedback('Username already exists');
         setLoading(false);
@@ -60,13 +60,17 @@ export default function Register() {
         createdAt: new Date().toISOString()
       };
 
+      // persist the new user list
       users.push(newUser);
       await AsyncStorage.setItem('users', JSON.stringify(users));
+
       await AsyncStorage.setItem('currentUser', JSON.stringify(newUser));
       await AsyncStorage.setItem('isLoggedIn', 'true');
 
+      // tells AuthContext who is logged in right away (so SavedJobs can key by user)
+      await login("someTokenValue", newUser.username, newUser.password); 
+
       setFeedback('Account created successfully! Redirecting...');
-      
       setTimeout(() => {
         router.replace('/Home');
       }, 1500);
@@ -80,14 +84,14 @@ export default function Register() {
   };
 
   return (
-    <KeyboardAvoidingView 
+    <KeyboardAvoidingView
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.formContainer}>
           <Text style={styles.title}>Create Account</Text>
-          
+
           <TextInput
             style={styles.input}
             placeholder="Username"
@@ -117,14 +121,14 @@ export default function Register() {
 
           {feedback ? (
             <View style={[
-              styles.feedbackContainer, 
+              styles.feedbackContainer,
               feedback.includes('successfully') ? styles.successFeedback : styles.errorFeedback
             ]}>
               <Text style={styles.feedbackText}>{feedback}</Text>
             </View>
           ) : null}
 
-          <TouchableOpacity 
+          <TouchableOpacity
             style={[styles.button, loading && styles.buttonDisabled]}
             onPress={handleRegister}
             disabled={loading}
@@ -134,7 +138,7 @@ export default function Register() {
             </Text>
           </TouchableOpacity>
 
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.linkButton}
             onPress={() => router.push('/Login')}
           >

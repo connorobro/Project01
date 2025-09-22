@@ -1,14 +1,10 @@
-import {
-  fireEvent,
-  render,
-  screen,
-  waitFor,
-} from "@testing-library/react-native";
-import { useLocalSearchParams, useRouter } from "expo-router";
 import React from "react";
-import JobsScreen from "../app/jobs";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react-native";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import * as adzuna from "../src/utils/adzuna";
+import JobsScreen from "../app/jobs";
 import { SavedJobsProvider } from "../src/utils/SavedJobsContext";
+import { AuthContext } from "../context/AuthProvider";
 
 jest.mock("expo-router", () => ({
   useRouter: jest.fn(),
@@ -18,10 +14,22 @@ jest.mock("expo-router", () => ({
 jest.spyOn(adzuna, "searchJobs");
 
 function renderWithProviders(ui: React.ReactElement) {
-  return render(<SavedJobsProvider>{ui}</SavedJobsProvider>);
+  const authValue = {
+    userToken: "t",
+    username: "tester",
+    password: "p",
+    login: jest.fn(),
+    logout: jest.fn(),
+    isLoading: false,
+  };
+  return render(
+    <AuthContext.Provider value={authValue as any}>
+      <SavedJobsProvider>{ui}</SavedJobsProvider>
+    </AuthContext.Provider>
+  );
 }
 
-test("renders returned jobs and supports saving", async () => {
+test("renders returned jobs and lets me save/unsave from the heart", async () => {
   (useLocalSearchParams as jest.Mock).mockReturnValue({ q: "software" });
   (useRouter as jest.Mock).mockReturnValue({ push: jest.fn() });
 
@@ -38,16 +46,28 @@ test("renders returned jobs and supports saving", async () => {
 
   renderWithProviders(<JobsScreen />);
 
-  expect(
-    await screen.findByText(/Showing results for: software/i)
-  ).toBeTruthy();
+  // chip shows current category
+  expect(await screen.findByText(/Category:\s*software/i)).toBeTruthy();
 
+  // job renders
   expect(await screen.findByText("Junior Dev")).toBeTruthy();
   expect(await screen.findByText(/Acme/i)).toBeTruthy();
 
-  const btn = await screen.findByText(/Save/i);
-  fireEvent.press(btn);
-  await waitFor(async () => {
-    expect(await screen.findByText(/Saved/i)).toBeTruthy();
-  });
+  // toggle heart by testID and assert its accessibilityLabel changes
+  const heart = await screen.findByTestId("heart-1");
+
+  // initially should say "Save job"
+  expect(heart.props.accessibilityLabel).toMatch(/save job/i);
+
+  fireEvent.press(heart);
+  await waitFor(() =>
+    expect(screen.getByTestId("heart-1").props.accessibilityLabel).toMatch(/unsave job/i)
+  );
+
+  fireEvent.press(screen.getByTestId("heart-1"));
+  await waitFor(() =>
+    expect(screen.getByTestId("heart-1").props.accessibilityLabel).toMatch(/save job/i)
+  );
 });
+
+
