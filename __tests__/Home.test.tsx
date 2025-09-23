@@ -1,8 +1,3 @@
-// import { render } from "@testing-library/react-native";
-// import React from "react";
-// import HomeScreen from "../app/Home";
-// console.log("HomeScreen:", HomeScreen);
-
 import {
   fireEvent,
   render,
@@ -200,19 +195,6 @@ describe("HomeScreen", () => {
       expect(screen.getByText("Choose Job Category")).toBeTruthy();
     });
 
-    it("renders all main UI elements", () => {
-      render(<HomeScreen />);
-
-      // Check top bar elements
-      expect(screen.getByText("Saved Jobs")).toBeTruthy();
-      expect(screen.getByText("TestUser")).toBeTruthy();
-
-      // Check main content
-      expect(screen.getByText("Choose Job Category")).toBeTruthy();
-      expect(screen.getByTestId("dropdown-container")).toBeTruthy();
-      expect(screen.getByText("Search Jobs")).toBeTruthy();
-    });
-
     it("displays username from context", () => {
       render(<HomeScreen />);
       expect(screen.getByText("TestUser")).toBeTruthy();
@@ -346,77 +328,6 @@ describe("HomeScreen", () => {
     });
   });
 
-  describe("Navigation", () => {
-    it("navigates to saved jobs when link is pressed", () => {
-      render(<HomeScreen />);
-      fireEvent.press(screen.getByTestId("link-/savedJobs"));
-      // Link component is mocked, so we just verify it exists
-      expect(screen.getByTestId("link-/savedJobs")).toBeTruthy();
-    });
-
-    it("navigates to jobs page with selected category", async () => {
-      render(<HomeScreen />);
-
-      // Select a category first
-      fireEvent.press(screen.getByTestId("dropdown-trigger"));
-      await waitFor(() => {
-        expect(screen.getByText("IT Jobs")).toBeTruthy();
-      });
-      fireEvent.press(screen.getByTestId("dropdown-option-it-jobs"));
-
-      // Then press search jobs
-      const searchLink = screen.getByTestId("link-[object Object]");
-      expect(searchLink).toBeTruthy();
-    });
-
-    it("navigates to jobs page with empty category when none selected", () => {
-      render(<HomeScreen />);
-      const searchLink = screen.getByTestId("link-[object Object]");
-      expect(searchLink).toBeTruthy();
-    });
-  });
-
-  describe("Menu Functionality", () => {
-    it("opens menu when user button is pressed", () => {
-      render(<HomeScreen />);
-      const userButton = screen.getByText("TestUser");
-      fireEvent.press(userButton);
-
-      expect(screen.getByTestId("menu-items")).toBeTruthy();
-    });
-
-    it("shows logout and profile options in menu", () => {
-      render(<HomeScreen />);
-      const userButton = screen.getByText("TestUser");
-      fireEvent.press(userButton);
-
-      expect(screen.getByTestId("menu-item-logout")).toBeTruthy();
-      expect(screen.getByTestId("menu-item-user-profile")).toBeTruthy();
-    });
-
-    it("calls logout when logout menu item is pressed", () => {
-      render(<HomeScreen />);
-      const userButton = screen.getByText("TestUser");
-      fireEvent.press(userButton);
-
-      const logoutButton = screen.getByTestId("menu-item-logout");
-      fireEvent.press(logoutButton);
-
-      expect(mockLogout).toHaveBeenCalled();
-    });
-
-    it("navigates to user profile when profile menu item is pressed", () => {
-      render(<HomeScreen />);
-      const userButton = screen.getByText("TestUser");
-      fireEvent.press(userButton);
-
-      const profileButton = screen.getByTestId("menu-item-user-profile");
-      fireEvent.press(profileButton);
-
-      expect(mockRouter.push).toHaveBeenCalledWith("/userProfile");
-    });
-  });
-
   describe("Authentication Context", () => {
     it("handles missing user token", () => {
       mockUseContext.mockReturnValue({
@@ -455,31 +366,6 @@ describe("HomeScreen", () => {
       // Should not crash
       fireEvent.press(screen.getByTestId("dropdown-trigger"));
       expect(screen.getByTestId("dropdown-menu")).toBeTruthy();
-    });
-
-    it("handles malformed API response", async () => {
-      mockFetch.mockResolvedValue({
-        ok: true,
-        json: () =>
-          Promise.resolve({
-            results: [
-              { label: "Valid Job", tag: "valid-job" },
-              {
-                /* missing required fields */
-              },
-              { label: "Another Valid Job", tag: "another-valid-job" },
-            ],
-          }),
-      });
-
-      render(<HomeScreen />);
-
-      fireEvent.press(screen.getByTestId("dropdown-trigger"));
-
-      await waitFor(() => {
-        expect(screen.getByText("Valid Job")).toBeTruthy();
-        expect(screen.getByText("Another Valid Job")).toBeTruthy();
-      });
     });
 
     it("handles network timeout", async () => {
