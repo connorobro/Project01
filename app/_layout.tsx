@@ -9,7 +9,15 @@ export default function RootLayout() {
     <AuthProvider>
       <SavedJobsProvider>
         <AuthGate>
-          <Stack />
+          <Stack>
+            <Stack.Screen name="index" options={{ headerTitle: "Index" }} />
+            <Stack.Screen name="Home" options={{ headerTitle: "Home" }} />
+            <Stack.Screen name="jobs" options={{ headerTitle: "Jobs" }} />
+            <Stack.Screen name="savedJobs" options={{ headerTitle: "Saved Jobs" }} />
+            <Stack.Screen name="Login" options={{ headerTitle: "Login" }} />
+            <Stack.Screen name="Register" options={{ headerTitle: "Register" }} />
+            <Stack.Screen name="debug" options={{ headerTitle: "Debug" }} />
+          </Stack>
         </AuthGate>
       </SavedJobsProvider>
     </AuthProvider>

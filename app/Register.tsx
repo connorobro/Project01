@@ -1,6 +1,6 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useRouter } from "expo-router";
-import React, { useState } from "react";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useRouter } from 'expo-router';
+import React, { useContext, useState } from 'react';
 import {
   KeyboardAvoidingView,
   Platform,
@@ -9,8 +9,8 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  View,
-} from "react-native";
+  View
+} from 'react-native';
 import { AuthContext } from "../context/AuthProvider";
 
 export default function Register() {
@@ -18,10 +18,10 @@ export default function Register() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [feedback, setFeedback] = useState("");
+  const [feedback, setFeedback] = useState('');
   const router = useRouter();
 
-  const { register } = React.useContext(AuthContext);
+  const { login } = useContext(AuthContext);                  
 
   const handleRegister = async () => {
     setFeedback("");
@@ -30,12 +30,10 @@ export default function Register() {
       setFeedback("Please fill in all fields");
       return;
     }
-
     if (password !== confirmPassword) {
       setFeedback("Passwords do not match");
       return;
     }
-
     if (password.length < 6) {
       setFeedback("Password must be at least 6 characters");
       return;
@@ -49,7 +47,6 @@ export default function Register() {
       const users = existingUsers ? JSON.parse(existingUsers) : [];
 
       const userExists = users.find((user: any) => user.username === username);
-
       if (userExists) {
         setFeedback("Username already exists");
         setLoading(false);
@@ -63,14 +60,18 @@ export default function Register() {
         createdAt: new Date().toISOString(),
       };
 
+      // persist the new user list
       users.push(newUser);
-      await register("someTokenValue", newUser.username, newUser.password); // Replace with actual token generation
 
-      await AsyncStorage.setItem("users", JSON.stringify(users));
-      await AsyncStorage.setItem("currentUser", JSON.stringify(newUser));
-      await AsyncStorage.setItem("isLoggedIn", "true");
+      await AsyncStorage.setItem('users', JSON.stringify(users));
 
-      setFeedback("Account created successfully! Redirecting...");
+      await AsyncStorage.setItem('currentUser', JSON.stringify(newUser));
+      await AsyncStorage.setItem('isLoggedIn', 'true');
+
+      // tells AuthContext who is logged in right away (so SavedJobs can key by user)
+      await login("someTokenValue", newUser.username, newUser.password); 
+
+      setFeedback('Account created successfully! Redirecting...');
 
       setTimeout(() => {
         router.replace("/Home");
@@ -120,14 +121,10 @@ export default function Register() {
           />
 
           {feedback ? (
-            <View
-              style={[
-                styles.feedbackContainer,
-                feedback.includes("successfully")
-                  ? styles.successFeedback
-                  : styles.errorFeedback,
-              ]}
-            >
+            <View style={[
+              styles.feedbackContainer,
+              feedback.includes('successfully') ? styles.successFeedback : styles.errorFeedback
+            ]}>
               <Text style={styles.feedbackText}>{feedback}</Text>
             </View>
           ) : null}
