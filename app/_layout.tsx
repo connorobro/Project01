@@ -11,7 +11,8 @@ export default function RootLayout() {
         <AuthGate>
           <Stack>
             <Stack.Screen name="index" options={{ headerTitle: "Index" }} />
-            <Stack.Screen name="Home" options={{ headerTitle: "Home" }} />
+            <Stack.Screen 
+              name="Home" />
             <Stack.Screen name="jobs" options={{ headerTitle: "Jobs" }} />
             <Stack.Screen name="savedJobs" options={{ headerTitle: "Saved Jobs" }} />
             <Stack.Screen name="Login" options={{ headerTitle: "Login" }} />

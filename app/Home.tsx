@@ -1,10 +1,7 @@
 import { Link, useRouter } from "expo-router";
-import * as React from "react";
-import { useContext } from "react";
-import { StyleSheet, Text, View } from "react-native";
-import { Dropdown } from "react-native-element-dropdown";
-import { Button, Menu, Provider } from "react-native-paper";
+import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/AuthProvider";
+import "./Home.css";
 
 const DropdownCategory = ({
   category,
@@ -13,14 +10,12 @@ const DropdownCategory = ({
   category: string | null;
   setCategory: (category: string | null) => void;
 }) => {
-  const [value, setValue] = React.useState<string | null>(null);
-  const [isFocus, setIsFocus] = React.useState(false);
-  const [data, setData] = React.useState<{ label: string; value: string }[]>(
-    []
-  );
+  const [value, setValue] = useState<string | null>(null);
+  const [isOpen, setIsOpen] = useState(false);
+  const [data, setData] = useState<{ label: string; value: string }[]>([]);
 
   // fetching Adzuna categories
-  React.useEffect(() => {
+  useEffect(() => {
     fetch(
       `https://api.adzuna.com/v1/api/jobs/us/categories?app_id=${process.env.EXPO_PUBLIC_ADZUNA_APP_ID}&app_key=${process.env.EXPO_PUBLIC_ADZUNA_API_KEY}`
     )
@@ -37,162 +32,109 @@ const DropdownCategory = ({
       .catch((err) => console.error("Error fetching categories:", err));
   }, []);
 
+  const selectedItem = data.find((item) => item.value === value);
+
   return (
-    <View style={dropdownStyles.container}>
-      <Dropdown
-        style={[dropdownStyles.dropdown, isFocus && { borderColor: "blue" }]}
-        placeholderStyle={dropdownStyles.placeholderStyle}
-        selectedTextStyle={dropdownStyles.selectedTextStyle}
-        inputSearchStyle={dropdownStyles.inputSearchStyle}
-        iconStyle={dropdownStyles.iconStyle}
-        data={data}
-        search
-        maxHeight={300}
-        labelField="label"
-        valueField="value"
-        placeholder={!isFocus ? "Select item" : "..."}
-        searchPlaceholder="Search..."
-        value={value}
-        onFocus={() => setIsFocus(true)}
-        onBlur={() => setIsFocus(false)}
-        onChange={(item) => {
-          setValue(item.value);
-          setIsFocus(false);
-          setCategory(item.value);
-        }}
-      />
-    </View>
+    <div className="dropdown-container">
+      <div className="dropdown">
+        <button
+          className="dropdown-toggle"
+          onClick={() => setIsOpen(!isOpen)}
+          type="button"
+        >
+          <span>
+            {selectedItem ? selectedItem.label : "Select Job Category"}
+          </span>
+          <span className={`chevron ${isOpen ? "rotate" : ""}`}>▼</span>
+        </button>
+        {isOpen && (
+          <div className="dropdown-menu">
+            {data.map((item) => (
+              <button
+                key={item.value}
+                className={`dropdown-item ${
+                  value === item.value ? "active" : ""
+                }`}
+                onClick={() => {
+                  setValue(item.value);
+                  setCategory(item.value);
+                  setIsOpen(false);
+                }}
+              >
+                {item.label}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
   );
 };
 
 export default function HomeScreen() {
-  const [menuVisible, setMenuVisible] = React.useState(false);
-  const [category, setCategory] = React.useState<string | null>(null);
-  const openMenu = () => setMenuVisible(true);
-  const closeMenu = () => setMenuVisible(false);
+  const [menuVisible, setMenuVisible] = useState(false);
+  const [category, setCategory] = useState<string | null>(null);
 
-  const { userToken, username, logout } = useContext(AuthContext);
+  const { logout, username } = useContext(AuthContext);
   const router = useRouter();
 
-  // // Early return for unauthenticated users
-  // React.useEffect(() => {
-  //   if (!userToken) {
-  //     router.replace("/");
-  //   }
-  // }, [userToken, router]);
-
   return (
-    <Provider>
-      <View style={styles.container}>
-        {/* top bar */}
-        <View style={styles.topBar}>
-          <Link href="/savedJobs" style={styles.button}>
+    <div className="home-container">
+      <header className="header">
+        <div className="header-left">
+          <Link href="/savedJobs" className="nav-button saved-jobs-btn">
             Saved Jobs
           </Link>
+        </div>
 
-          <Menu
-            visible={menuVisible}
-            onDismiss={closeMenu}
-            anchor={
-              <Button mode="contained" onPress={openMenu} style={styles.button}>
-                {username || "User"}
-              </Button>
-            }
+        <div className="header-right">
+          <div style={{ position: "relative" }}>
+            <button
+              className="nav-button user-profile-btn"
+              onClick={() => setMenuVisible(!menuVisible)}
+            >
+              <span className="nav-icon">👤</span>
+              {username || "User Profile"}
+            </button>
+            {menuVisible && (
+              <div className="user-menu">
+                <button
+                  className="dropdown-item"
+                  onClick={() => {
+                    setMenuVisible(false);
+                    router.push("/userProfile");
+                  }}
+                >
+                  User Profile
+                </button>
+                <button
+                  className="dropdown-item"
+                  onClick={() => {
+                    setMenuVisible(false);
+                    logout();
+                  }}
+                >
+                  Logout
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      </header>
+
+      <main className="main-content">
+        <div className="search-section">
+          <p className="text">Choose Job Category</p>
+          <DropdownCategory category={category} setCategory={setCategory} />
+
+          <Link
+            href={{ pathname: "/jobs", params: { q: category ?? "" } }}
+            className="button"
           >
-            <Menu.Item
-              onPress={() => {
-                closeMenu();
-                logout();
-              }}
-              title="Logout"
-            />
-            <Menu.Item
-              onPress={() => {
-                closeMenu();
-                router.push("/userProfile");
-              }}
-              title="User Profile"
-            />
-          </Menu>
-        </View>
-
-        {/* main content */}
-        <View
-          style={{
-            flexDirection: "row",
-            marginTop: 80,
-            justifyContent: "center",
-          }}
-        >
-          <View style={{ width: 180, marginRight: 16, alignItems: "center" }}>
-            <Text style={styles.text}>Choose Job Category</Text>
-            <DropdownCategory category={category} setCategory={setCategory} />
-          </View>
-        </View>
-
-        {/* spacer */}
-        <View style={{ height: 40 }} />
-
-        {/* pass category as q param */}
-        <Link
-          href={{ pathname: "/jobs", params: { q: category ?? "" } }}
-          style={styles.button}
-        >
-          Search Jobs
-        </Link>
-      </View>
-    </Provider>
+            Search Jobs
+          </Link>
+        </div>
+      </main>
+    </div>
   );
 }
-
-const dropdownStyles = StyleSheet.create({
-  container: {
-    backgroundColor: "white",
-    padding: 16,
-    borderRadius: 10,
-    marginTop: 10,
-  },
-  dropdown: {
-    height: 60,
-    minWidth: 160,
-    borderColor: "gray",
-    borderWidth: 0.5,
-    borderRadius: 8,
-    paddingHorizontal: 16,
-    fontSize: 20,
-  },
-  placeholderStyle: { fontSize: 20 },
-  selectedTextStyle: { fontSize: 20 },
-  iconStyle: { width: 20, height: 20 },
-  inputSearchStyle: { height: 40, fontSize: 16 },
-});
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#25292e",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  topBar: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-    width: "100%",
-    paddingHorizontal: 20,
-    paddingTop: 40,
-    zIndex: 10,
-  },
-  text: { color: "white" },
-  button: {
-    backgroundColor: "#4CAF50",
-    padding: 12,
-    borderRadius: 8,
-    minWidth: 160,
-    alignItems: "center",
-  },
-});
