@@ -16,7 +16,7 @@ export default function Index() {
   return (
     <View style={styles.container}>
         <view style={{width:'25%',}}>
-          <Text style={styles.title}>Job Listing App</Text>
+          <Text style={styles.title}>Job Listing</Text>
         </view>
       <View style={{flexDirection: 'column',justifyContent:'space-evenly', width: '50%',height: '45%', backgroundColor: '#003459', borderRadius: 15}}>
         <Link href="./Register" style={styles.button}>
@@ -34,16 +34,13 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "space-evenly",
     alignItems: "center",
-    // backgroundColor: "#25292e",
     backgroundColor: '#00171F',
-    // backgroundColor: '#00171F',
     textAlign: 'center'
   },
   text: {
     color: "white",
     fontWeight: 'bold',
     fontSize: 25,
-    // marginBottom: 100
   },
   button: {
     textAlign: 'center',
@@ -52,7 +49,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#007AFF",
     borderRadius: 10,
     padding: 15,
-    // textDecorationLine: "underline",
     color: "#fff",
   },
   title:{

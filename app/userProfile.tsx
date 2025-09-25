@@ -60,18 +60,18 @@ export default function UserProfile() {
       {/* <View style={{width:'15%',backgroundColor: 'white', alignContent: "center",}}> */}
       {/* <Link href="/Home" style={styles.button}>Home</Link> */}
       {/* </View> */}
-      <View style={{flexDirection: 'column',}}>
-        <View style={{alignItems: 'center',borderRadius:100,margin:10,padding: 5,width: 150, height: 150, backgroundColor: "rgba(87, 120, 129, 1)"}}>
+      {/* <View style={{flexDirection: 'column',}}> */}
+        {/* <View style={{alignItems: 'center',borderRadius:100,margin:10,padding: 5,width: 150, height: 150, backgroundColor: "rgba(87, 120, 129, 1)"}}>
           <Text style={{fontWeight: "900",color: 'white',}}>Photo</Text>
-        </View>
-        <View style={{alignItems: 'flex-start',width: 200, height: 200,borderRadius: 20, backgroundColor: 'rgba(154, 187, 203, 0.33)', marginTop: 20}}>
+        </View> */}
+        {/* <View style={{alignItems: 'flex-start',width: 200, height: 200,borderRadius: 20, backgroundColor: 'rgba(154, 187, 203, 0.33)', marginTop: 20}}>
           <Text style={styles.text}>Name:  </Text>
           <Text style={styles.text}>Title: </Text>
           <Text style={styles.text}>User Id</Text>
 
-        </View>
-      </View>
-      <View style={{flexDirection:"column"}}>
+        </View> */}
+      {/* </View> */}
+      <View style={{flexDirection:"column",padding: 100, borderRadius: 15, backgroundColor: '#00171F'}}>
         <Text style={styles.header}>Edit User Profile</Text>
         {/* <Text style={styles.header}>Edit User Credentials</Text> */}
 
@@ -108,8 +108,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'row',
-    backgroundColor: "#25292e",
-    // backgroundColor: 'rgba(130, 146, 154, 0.9)',
+    // backgroundColor: "#25292e",
+    backgroundColor:'#003459',
     justifyContent: "space-evenly",
     alignItems: "center",
     padding: 24,
