@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import {
   KeyboardAvoidingView,
   Platform,
@@ -12,6 +12,8 @@ import {
   View
 } from 'react-native';
 
+import { AuthContext } from "../context/AuthProvider";
+
 export default function Register({ onRegistered }: { onRegistered?: () => void }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -19,6 +21,7 @@ export default function Register({ onRegistered }: { onRegistered?: () => void }
   const [loading, setLoading] = useState(false);
   const [feedback, setFeedback] = useState('');
   const router = useRouter();   
+  const { login } = useContext(AuthContext);
 
   const handleRegister = async () => {
     setFeedback('');
@@ -62,8 +65,13 @@ export default function Register({ onRegistered }: { onRegistered?: () => void }
 
       users.push(newUser);
       await AsyncStorage.setItem('users', JSON.stringify(users));
+
+      // persist current user and mark as logged in
       await AsyncStorage.setItem('currentUser', JSON.stringify(newUser));
       await AsyncStorage.setItem('isLoggedIn', 'true');
+
+      // update in-memory auth state so the app recognizes the logged-in user
+      await login('someTokenValue', newUser.username, newUser.password);
 
       setFeedback('Account created successfully! Redirecting...');
       if (onRegistered) {
