@@ -13,7 +13,7 @@ import {
 } from "react-native";
 import { AuthContext } from "../context/AuthProvider";
 
-export default function Login() {
+export default function Login({ onLoggedIn }: { onLoggedIn?: () => void }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -47,11 +47,9 @@ export default function Login() {
         await AsyncStorage.setItem("currentUser", JSON.stringify(user));
         await AsyncStorage.setItem("isLoggedIn", "true");
 
-        setFeedback("Login successful! Welcome back!");
-
-        setTimeout(() => {
-          router.replace("/Home");
-        }, 1500);
+  // navigate or notify tests
+  if (onLoggedIn) onLoggedIn();
+  else router.replace("/Home");
       } else {
         setFeedback("Invalid username or password");
       }

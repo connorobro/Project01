@@ -12,7 +12,7 @@ import {
   View
 } from 'react-native';
 
-export default function Register() {
+export default function Register({ onRegistered }: { onRegistered?: () => void }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -66,10 +66,11 @@ export default function Register() {
       await AsyncStorage.setItem('isLoggedIn', 'true');
 
       setFeedback('Account created successfully! Redirecting...');
-      
-      setTimeout(() => {
+      if (onRegistered) {
+        onRegistered();
+      } else {
         router.replace('/Home');
-      }, 1500);
+      }
 
     } catch (error) {
       console.error('Registration error:', error);
