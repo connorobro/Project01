@@ -19,11 +19,11 @@ export default function Index() {
           <Text style={styles.title}>Job Listing</Text>
         </view>
       <View style={{flexDirection: 'column',justifyContent:'space-evenly', width: '50%',height: '45%', backgroundColor: '#003459', borderRadius: 15}}>
-        <Link href="./Register" style={styles.button}>
-          Register
-        </Link>
         <Link href={"./Login"} style={styles.button}>
           Login
+        </Link>
+        <Link href="./Register" style={styles.button}>
+          Register
         </Link>
       </View>
     </View>
