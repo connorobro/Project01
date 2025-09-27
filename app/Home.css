@@ -1,0 +1,384 @@
+/* Color Scheme */
+:root {
+  --white: #FFFFFF;
+  --light-blue: #00A7E1;
+  --dark-navy: #00171F;
+  --navy: #003459;
+  --blue: #007EA7;
+}
+
+/* Global Styles */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+/* Home Container Background */
+.home-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, var(--navy) 0%, var(--dark-navy) 100%);
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Button Styling */
+.button {
+  background: linear-gradient(135deg, var(--light-blue), var(--blue));
+  color: var(--white);
+  padding: 10px 20px;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 15px;
+  text-decoration: none;
+  display: inline-block;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0, 167, 225, 0.25);
+  position: relative;
+  overflow: hidden;
+}
+
+.button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.button:hover::before {
+  left: 100%;
+}
+
+.button:hover {
+  background: linear-gradient(135deg, var(--blue), var(--light-blue));
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0, 167, 225, 0.4);
+}
+
+/* Dropdown Styling */
+.dropdown-container {
+  position: relative;
+  width: 100%;
+  margin-top: 12px;
+}
+
+.dropdown {
+  position: relative;
+  width: 100%;
+}
+
+.dropdown-toggle {
+  width: 100%;
+  padding: 16px 20px;
+  background-color: var(--white);
+  border: 2px solid rgba(0, 167, 225, 0.2);
+  border-radius: 16px;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--dark-navy);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.dropdown-toggle:hover {
+  border-color: var(--light-blue);
+  box-shadow: 0 4px 20px rgba(0, 167, 225, 0.15);
+  transform: translateY(-1px);
+}
+
+.dropdown-toggle:focus {
+  outline: none;
+  border-color: var(--light-blue);
+  box-shadow: 0 0 0 4px rgba(0, 167, 225, 0.1);
+}
+
+.chevron {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  color: var(--light-blue);
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.chevron.rotate {
+  transform: rotate(180deg);
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  background-color: var(--white);
+  border: 1px solid rgba(0, 167, 225, 0.2);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  z-index: 1000;
+  max-height: 300px;
+  overflow-y: auto;
+  backdrop-filter: blur(10px);
+}
+
+.dropdown-item {
+  width: 100%;
+  padding: 14px 20px;
+  background: none;
+  border: none;
+  text-align: left;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--dark-navy);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-radius: 0;
+}
+
+.dropdown-item:first-child {
+  border-radius: 16px 16px 0 0;
+}
+
+.dropdown-item:last-child {
+  border-radius: 0 0 16px 16px;
+}
+
+.dropdown-item:hover {
+  background: linear-gradient(135deg, var(--light-blue), var(--blue));
+  color: var(--white);
+  transform: translateX(4px);
+}
+
+.dropdown-item.active {
+  background: linear-gradient(135deg, var(--blue), var(--light-blue));
+  color: var(--white);
+}
+
+/* Text Styling */
+.text {
+  color: var(--white);
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+  text-align: center;
+  letter-spacing: 0.5px;
+}
+
+/* Modern Layout Improvements */
+.main-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 100px 20px 40px;
+  gap: 40px;
+}
+
+.search-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border-radius: 24px;
+  padding: 40px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  max-width: 500px;
+  width: 100%;
+}
+
+/* Header Improvements */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 20px;
+
+}
+
+.header-left, .header-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* Modern Navigation Buttons */
+.nav-button {
+  background: linear-gradient(135deg, var(--light-blue), var(--blue));
+  color: var(--white);
+  padding: 20px 32px;
+  border: none;
+  border-radius: 16px;
+  font-weight: 700;
+  font-size: 18px;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(0, 167, 225, 0.3);
+  position: relative;
+  overflow: hidden;
+  min-width: 180px;
+  justify-content: center;
+}
+
+.nav-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.nav-button:hover::before {
+  left: 100%;
+}
+
+.nav-button:hover {
+  background: linear-gradient(135deg, var(--blue), var(--light-blue));
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 167, 225, 0.4);
+}
+
+.saved-jobs-btn {
+  background: linear-gradient(135deg, var(--light-blue), var(--blue));
+}
+
+.user-profile-btn {
+  background: linear-gradient(135deg, var(--navy), var(--blue));
+}
+
+.user-profile-btn:hover {
+  background: linear-gradient(135deg, var(--blue), var(--navy));
+}
+
+.nav-icon {
+  font-size: 18px;
+  display: inline-block;
+}
+
+.menu-icon {
+  font-size: 16px;
+  margin-right: 8px;
+}
+
+/* User Menu Dropdown */
+.user-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 167, 225, 0.2);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  min-width: 180px;
+  overflow: hidden;
+}
+
+.user-menu .dropdown-item {
+  padding: 16px 20px;
+  font-weight: 500;
+  border-radius: 0;
+}
+
+.user-menu .dropdown-item:first-child {
+  border-radius: 16px 16px 0 0;
+}
+
+.user-menu .dropdown-item:last-child {
+  border-radius: 0 0 16px 16px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .main-content {
+    padding: 80px 16px 32px;
+    gap: 32px;
+  }
+  
+  .search-section {
+    padding: 32px 24px;
+    margin: 0 16px;
+  }
+  
+  .header {
+    padding: 10px 16px;
+    min-height: 50px;
+  }
+  
+  .nav-button {
+    padding: 12px 20px;
+    font-size: 15px;
+    min-width: 120px;
+  }
+  
+  .nav-icon {
+    font-size: 16px;
+  }
+  
+  .text {
+    font-size: 16px;
+  }
+  
+  .button {
+    padding: 8px 16px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .main-content {
+    padding: 70px 12px 24px;
+    gap: 24px;
+  }
+  
+  .search-section {
+    padding: 24px 20px;
+    margin: 0 12px;
+  }
+  
+  .header {
+    padding: 8px 12px;
+    min-height: 45px;
+  }
+  
+  .header-left, .header-right {
+    gap: 8px;
+  }
+  
+  .nav-button {
+    padding: 10px 16px;
+    font-size: 14px;
+    min-width: 100px;
+  }
+  
+  .nav-icon {
+    font-size: 14px;
+  }
+  
+  .button {
+    padding: 6px 12px;
+    font-size: 13px;
+  }
+}

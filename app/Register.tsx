@@ -24,34 +24,31 @@ export default function Register() {
   const { login } = useContext(AuthContext);   
 
   const handleRegister = async () => {
-    setFeedback('');
+    setFeedback("");
 
     if (!username.trim() || !password.trim()) {
-      setFeedback('Please fill in all fields');
+      setFeedback("Please fill in all fields");
       return;
     }
-
     if (password !== confirmPassword) {
-      setFeedback('Passwords do not match');
+      setFeedback("Passwords do not match");
       return;
     }
-
     if (password.length < 6) {
-      setFeedback('Password must be at least 6 characters');
+      setFeedback("Password must be at least 6 characters");
       return;
     }
 
     setLoading(true);
-    setFeedback('Creating account...');
+    setFeedback("Creating account...");
 
     try {
-      const existingUsers = await AsyncStorage.getItem('users');
+      const existingUsers = await AsyncStorage.getItem("users");
       const users = existingUsers ? JSON.parse(existingUsers) : [];
-      
-      const userExists = users.find((user: any) => user.username === username);
 
+      const userExists = users.find((user: any) => user.username === username);
       if (userExists) {
-        setFeedback('Username already exists');
+        setFeedback("Username already exists");
         setLoading(false);
         return;
       }

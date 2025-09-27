@@ -6,6 +6,11 @@ type AuthContextType = {
   userToken: string | null;
   login: (token: string, username: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
+  register: (
+    token: string,
+    username: string,
+    password: string
+  ) => Promise<void>;
   username: string | null;
   password: string | null;
   isLoading: boolean;
@@ -17,6 +22,7 @@ export const AuthContext = createContext<AuthContextType>({
   password: null,
   login: async () => {},
   logout: async () => {},
+  register: async () => {},
   isLoading: true,
 });
 
@@ -51,8 +57,20 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     setUsername(username);
     setPassword(password);
     setIsLoading(false);
-    console.log("User logged in:", username);
-    console.log("Password Auth:", password);
+  };
+
+  const register = async (
+    token: string,
+    username: string,
+    password: string
+  ) => {
+    await AsyncStorage.setItem("userToken", token);
+    await AsyncStorage.setItem("username", username);
+    await AsyncStorage.setItem("password", password);
+    setUserToken(token);
+    setUsername(username);
+    setPassword(password);
+    setIsLoading(false);
   };
 
   const logout = async () => {
@@ -67,9 +85,19 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   return (
     <AuthContext.Provider
-      value={{ userToken, username, password, login, logout, isLoading }}
+      value={{
+        userToken,
+        username,
+        password,
+        login,
+        register,
+        logout,
+        isLoading,
+      }}
     >
       {children}
     </AuthContext.Provider>
   );
 };
+
+export const useAuth = () => React.useContext(AuthContext);

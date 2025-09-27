@@ -41,14 +41,13 @@ export default function Login() {
         (u: any) => u.username === username && u.password === password
       );
       if (user) {
-        await login("someTokenValue", user.username, user.password); // Replace "someTokenValue" with a real token if you have one
-        setFeedback("Login successful! Welcome back!");
+        // Tell AuthContext who is logged in
+        await login("someTokenValue", user.username, user.password);
 
         await AsyncStorage.setItem("currentUser", JSON.stringify(user));
         await AsyncStorage.setItem("isLoggedIn", "true");
 
         setFeedback("Login successful! Welcome back!");
-
         setTimeout(() => {
           router.replace("/Home");
         }, 1500);
