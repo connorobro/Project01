@@ -1,4 +1,4 @@
-// Simple utility functions for user operations
+
 export function validateUser(username, password) {
   if (!username || !username.trim()) {
     return { valid: false, message: 'Username is required' };

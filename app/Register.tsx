@@ -1,24 +1,27 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import {
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View
+    KeyboardAvoidingView,
+    Platform,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View
 } from 'react-native';
+import { AuthContext } from "../context/AuthProvider";
 
 export default function Register() {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [feedback, setFeedback] = useState('');
-  const router = useRouter();   
+  const router = useRouter();
+
+  const { login } = useContext(AuthContext);   
 
   const handleRegister = async () => {
     setFeedback('');
@@ -57,18 +60,24 @@ export default function Register() {
         id: Date.now().toString(),
         username,
         password,
-        createdAt: new Date().toISOString()
+        createdAt: new Date().toISOString(),
       };
 
+      // persist the new user list
       users.push(newUser);
+
       await AsyncStorage.setItem('users', JSON.stringify(users));
+
       await AsyncStorage.setItem('currentUser', JSON.stringify(newUser));
       await AsyncStorage.setItem('isLoggedIn', 'true');
 
+      // tells AuthContext who is logged in right away (so SavedJobs can key by user)
+      await login("someTokenValue", newUser.username, newUser.password); 
+
       setFeedback('Account created successfully! Redirecting...');
-      
+
       setTimeout(() => {
-        router.replace('/Home');
+        router.replace("/Home");
       }, 1500);
 
     } catch (error) {
