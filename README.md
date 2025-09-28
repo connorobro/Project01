@@ -20,7 +20,7 @@ The application supports:
 ## Introduction  
 - Our team used Slack to manage communication outside class.  
 - Based on the project requirements, we initially outlined about 12–15 user stories/issues.  
-- Nearly all major stories were completed, including registration, login, saved jobs, API integration, styling, and profile editing.  
+- All major stories were completed, including registration, login, saved jobs, API integration, styling, and profile editing.  
 
 ---
 
@@ -40,6 +40,7 @@ Testing was hands down the hardest part because Jest was frustrating to work wit
 I was able to get a few test cases to work by installing the correct dependencies, such as @testing-library/react-native, and using utilities like fireEvent, render, screen, and waitFor. For the API keys, I looked at an old project I had worked on and used it as inspiration. I first installed react-native-dotenv and then imported it into the page where I was calling the API. I created a .env.local file in the project’s root directory and added the keys like this:
 - EXPO_PUBLIC_ADZUNA_API_KEY=...
 - EXPO_PUBLIC_ADZUNA_APP_ID=...
+  
 Following the React Native Expo documentation, I then used them in my API URL as: https://api.adzuna.com/v1/api/jobs/us/categories?app_id=${process.env.EXPO_PUBLIC_ADZUNA_APP_ID}&app_key=${process.env.EXPO_PUBLIC_ADZUNA_API_KEY}
 
 **Favorite Part**  
