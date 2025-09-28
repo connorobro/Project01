@@ -1,7 +1,8 @@
 import { Link, useRouter } from "expo-router";
 import React, { useContext, useEffect } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet } from "react-native";
 import { AuthContext } from "../context/AuthProvider";
+import "./index.css";
 
 export default function Index() {
   const { userToken } = useContext(AuthContext);
@@ -14,27 +15,17 @@ export default function Index() {
   }, [userToken, router]);
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.text}>Job Listing</Text>
-      <Link href="./Register" style={styles.button}>
-        Register
-      </Link>
-      <Link href={"./Login"} style={styles.button}>
-        Login
-      </Link>
-      {/* <Link href={"/Home"} style={styles.button}>
-        Home
-      </Link>
-      <Link href={"/savedJobs"} style={styles.button}>
-        Saved Jobs
-      </Link>
-      <Link href={"/jobs"} style={styles.button}>
-        Job
-      </Link> */}
-      <Link href={"/debug"} style={styles.button}>
-        View Database
-      </Link>
-    </View>
+    <div className="page-container">
+      <h1 className="title">Job Listing</h1>
+      <main className="center-container">
+        <Link className="index-button" href={"./Login"} style={styles.button}>
+          Login
+        </Link>
+        <Link className="index-button" href="./Register" style={styles.button}>
+          Register
+        </Link>
+      </main>
+    </div>
   );
 }
 const styles = StyleSheet.create({
