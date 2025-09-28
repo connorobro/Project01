@@ -95,7 +95,7 @@ I restructured how jobs were stored and tied them to individual user sessions. I
 My favorite part was designing  and styling the Jobs page and the Saved Jobs page was my favorite part. I enjoyed making them both visually appealing and functional, and it was especially rewarding to see them fully working together — users could search, save, and return later to review opportunities they liked.
 
 **Redo**  
-If I could do it again, I would set up persistence and per-user saved jobs earlier in development to avoid delays in testing and debugging.
+If I could do it again, I would set up persistence and per-user saved jobs earlier in development to avoid delays in testing and debugging. I would also enrich each job listing with more information so it matched our acceptance criteria—adding a short description preview, clearer company details, a posting date, and even a quick summary of application requirements on the job card, with a detailed screen to show the full description.
 
 **Lesson Learned**  
 I learned how React Native could be applied to create the features we wanted, and how to resolve merge conflicts in GitHub so code could be successfully integrated into the main branch. I also learned how to collaborate effectively in a group setting to build an end product, while improving my debugging skills and approach to designing user-friendly pages.
