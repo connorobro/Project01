@@ -10,13 +10,18 @@ export default function RootLayout() {
       <SavedJobsProvider>
         <AuthGate>
           <Stack>
-            <Stack.Screen name="index" options={{ headerTitle: "Index" }} />
-            <Stack.Screen 
-              name="Home" />
+            <Stack.Screen name="index" options={{ headerTitle: "Welcome" }} />
+            <Stack.Screen name="Home" />
             <Stack.Screen name="jobs" options={{ headerTitle: "Jobs" }} />
-            <Stack.Screen name="savedJobs" options={{ headerTitle: "Saved Jobs" }} />
+            <Stack.Screen
+              name="savedJobs"
+              options={{ headerTitle: "Saved Jobs" }}
+            />
             <Stack.Screen name="Login" options={{ headerTitle: "Login" }} />
-            <Stack.Screen name="Register" options={{ headerTitle: "Register" }} />
+            <Stack.Screen
+              name="Register"
+              options={{ headerTitle: "Register" }}
+            />
             <Stack.Screen name="debug" options={{ headerTitle: "Debug" }} />
           </Stack>
         </AuthGate>
@@ -36,7 +41,8 @@ function AuthGate({ children }: { children: React.ReactNode }) {
   // segments is an array like ["Home"] or ["jobs"] depending on route
   const seg = segments[0] ? segments[0].toLowerCase() : "";
 
-  const shouldRedirect = !isLoading && !publicSegments.includes(seg) && !userToken;
+  const shouldRedirect =
+    !isLoading && !publicSegments.includes(seg) && !userToken;
 
   // If we need to redirect, render the expo-router Redirect component so navigation happens
   // only when the router is ready (avoids 'attempted to navigate before mounting').

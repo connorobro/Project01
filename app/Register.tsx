@@ -1,16 +1,16 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useRouter } from 'expo-router';
-import React, { useContext, useState } from 'react';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useRouter } from "expo-router";
+import React, { useContext, useState } from "react";
 import {
-    KeyboardAvoidingView,
-    Platform,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View
-} from 'react-native';
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { AuthContext } from "../context/AuthProvider";
 
 export default function Register() {
@@ -18,10 +18,10 @@ export default function Register() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [feedback, setFeedback] = useState('');
+  const [feedback, setFeedback] = useState("");
   const router = useRouter();
 
-  const { login } = useContext(AuthContext);   
+  const { login } = useContext(AuthContext);
 
   const handleRegister = async () => {
     setFeedback("");
@@ -63,37 +63,36 @@ export default function Register() {
       // persist the new user list
       users.push(newUser);
 
-      await AsyncStorage.setItem('users', JSON.stringify(users));
+      await AsyncStorage.setItem("users", JSON.stringify(users));
 
-      await AsyncStorage.setItem('currentUser', JSON.stringify(newUser));
-      await AsyncStorage.setItem('isLoggedIn', 'true');
+      await AsyncStorage.setItem("currentUser", JSON.stringify(newUser));
+      await AsyncStorage.setItem("isLoggedIn", "true");
 
       // tells AuthContext who is logged in right away (so SavedJobs can key by user)
-      await login("someTokenValue", newUser.username, newUser.password); 
+      await login("someTokenValue", newUser.username, newUser.password);
 
-      setFeedback('Account created successfully! Redirecting...');
+      setFeedback("Account created successfully! Redirecting...");
 
       setTimeout(() => {
         router.replace("/Home");
       }, 1500);
-
     } catch (error) {
-      console.error('Registration error:', error);
-      setFeedback('Failed to create account. Please try again.');
+      console.error("Registration error:", error);
+      setFeedback("Failed to create account. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <KeyboardAvoidingView 
+    <KeyboardAvoidingView
       style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.formContainer}>
           <Text style={styles.title}>Create Account</Text>
-          
+
           <TextInput
             style={styles.input}
             placeholder="Username"
@@ -122,27 +121,31 @@ export default function Register() {
           />
 
           {feedback ? (
-            <View style={[
-              styles.feedbackContainer, 
-              feedback.includes('successfully') ? styles.successFeedback : styles.errorFeedback
-            ]}>
+            <View
+              style={[
+                styles.feedbackContainer,
+                feedback.includes("successfully")
+                  ? styles.successFeedback
+                  : styles.errorFeedback,
+              ]}
+            >
               <Text style={styles.feedbackText}>{feedback}</Text>
             </View>
           ) : null}
 
-          <TouchableOpacity 
+          <TouchableOpacity
             style={[styles.button, loading && styles.buttonDisabled]}
             onPress={handleRegister}
             disabled={loading}
           >
             <Text style={styles.buttonText}>
-              {loading ? 'Creating Account...' : 'Register'}
+              {loading ? "Creating Account..." : "Register"}
             </Text>
           </TouchableOpacity>
 
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.linkButton}
-            onPress={() => router.push('/Login')}
+            onPress={() => router.push("/Login")}
           >
             <Text style={styles.linkText}>
               Already have an account? Login here
@@ -157,17 +160,30 @@ export default function Register() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
+    // Replace the solid background color with a gradient-like effect
+    // Since React Native doesn't support CSS gradients directly, we'll use a solid color that matches your theme
+    backgroundColor: "#003459", // This is your --navy color
   },
   scrollContent: {
     flexGrow: 1,
     justifyContent: "center",
+    // Add the gradient background here using your color scheme
+    backgroundColor: "#00171F", // This is your --dark-navy color
   },
   formContainer: {
     padding: 20,
     margin: 20,
-    backgroundColor: "#003459",
+    backgroundColor: "rgba(0, 52, 89, 0.9)", // Semi-transparent navy
     borderRadius: 10,
+    // Add some shadow for depth
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
   title: {
     fontSize: 24,
