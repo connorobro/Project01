@@ -21,19 +21,45 @@ function AuthGate({ children }: { children: React.ReactNode }) {
   const segments = useSegments();
 
   // Define public top-level segments; everything else will be protected by default.
-  // Include empty string for root (index).
-  const publicSegments = ["", "index", "login", "register", "debug"];
+  const publicSegments = ["login", "register", "debug"];
 
-  // segments is an array like ["Home"] or ["jobs"] depending on route
-  const seg = segments[0] ? segments[0].toLowerCase() : "";
+  // Debug logging
+  console.log("AuthGate - segments:", segments);
+  console.log("AuthGate - userToken:", !!userToken);
+  console.log("AuthGate - isLoading:", isLoading);
 
-  const shouldRedirect = !isLoading && !publicSegments.includes(seg) && !userToken;
+  // Wait for loading to complete before making redirect decisions
+  if (isLoading) {
+    console.log("AuthGate - Still loading, showing children");
+    return <>{children}</>;
+  }
 
-  // If we need to redirect, render the expo-router Redirect component so navigation happens
-  // only when the router is ready (avoids 'attempted to navigate before mounting').
-  if (shouldRedirect) {
+  // Check if we're on a route that should always be accessible
+  // The root route appears as an empty segments array in the logs
+  if ((segments as string[]).length === 0) {
+    console.log("AuthGate - Root route (empty segments), allowing access");
+    return <>{children}</>;
+  }
+
+  // Get the first segment and convert to lowercase for comparison
+  const seg = segments[0].toLowerCase();
+  console.log("AuthGate - seg:", seg);
+
+  // Special case: if someone navigates directly to index, allow it
+  if (seg === "index") {
+    console.log("AuthGate - Index route, allowing access");
+    return <>{children}</>;
+  }
+
+  // Check if current route is public
+  const isPublicRoute = publicSegments.includes(seg);
+  
+  // Only redirect to Login if user is not authenticated and route is not public
+  if (!userToken && !isPublicRoute) {
+    console.log("AuthGate - User not authenticated and route not public, redirecting to Login");
     return <Redirect href="/Login" />;
   }
 
+  console.log("AuthGate - All checks passed, allowing access");
   return <>{children}</>;
 }

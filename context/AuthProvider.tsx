@@ -56,13 +56,24 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   const logout = async () => {
+    console.log("Logout started - clearing storage and redirecting to /");
+    // Clear storage first
     await AsyncStorage.removeItem("userToken");
     await AsyncStorage.removeItem("username");
     await AsyncStorage.removeItem("password");
+    
+    // Update state - ensure we're not in loading state
+    setIsLoading(false);
     setUserToken(null);
     setUsername(null);
     setPassword(null);
-    router.replace("/");
+    
+    console.log("Logout - storage cleared, state updated, redirecting to /");
+    
+    // Use setTimeout to ensure state updates are processed
+    setTimeout(() => {
+      router.replace("/");
+    }, 100);
   };
 
   return (
