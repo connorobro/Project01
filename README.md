@@ -55,26 +55,26 @@ I learned that React Native does not handle website creation and database storag
 ---
 
 ### Connor O’Brien  
-- **Pull Requests**: *(Insert PR links)*  
-- **Issues**: *(Insert Issue links)*  
+- **Pull Requests**: [https://github.com/connorobro/Project01/pulls?q=is%3Apr+is%3Aclosed+author%3Aconnorobro](https://github.com/connorobro/Project01/pulls?q=is%3Apr+is%3Aclosed+author%3Aconnorobro)
+  
+- **Issues**: [*(Insert Issue links)*  ](https://github.com/connorobro/Project01/issues?q=is%3Aissue%20state%3Aclosed%20assignee%3Aconnorobro)
 
 **Role / Stories Worked On**  
-*(Fill in here)*  
-
-**Biggest Challenge**  
-*(Fill in here)*  
+My main tasks I focused on throughout the project was to createthe backend database for our entire project as well as tables for the user profiles, so most of my issues and pull requests were related to that. Some additional features I worked on were creating login and registration pages and making changes to routing to stop various edge cases that would crash or mess up the flow of the program
+**Biggest Challenge** 
+The biggest challenge for me was the initial setup and testing of the database. I initially started with SQLite becuase it was what I saw others using, but after days of getting many errors I found out in the end that SQLite wouldn't be compatible with other pieces of our project.
 
 **Resolution**  
-*(Fill in here)*  
+I ended up dropping SQLite and rebuilding the database using Async instead. After switching databases and building back up to having working profiles, I had a much easier time. Some later issues related to my database came up later becuase I didn't make any unit tests after setting in up to verify things were working but I was able to fix them over time.
 
 **Favorite Part**  
-*(Fill in here)*  
+My favorite part of the project was seeing all of the different pieces come together. Once the database, login system, and routing were stable, it was really satisfying to see users create accounts, log in, and interact with the application the way we envisioned. It felt like all the behind-the-scenes work finally paid off.
 
 **Redo**  
-*(Fill in here)*  
+I would go back and implement better testing earlier in the process. Writing unit tests alongside the database setup would have saved me time fixing bugs later on and given me more confidence that everything was working as expected.
 
 **Lesson Learned**  
-*(Fill in here)*  
+The most important lesson I learned from this project is to not cut corners when it comes to testing and planning. Also, making sure to choose the right tools early on and verifying functionality step by step makes development smoother and reduces stress later in the project.
 
 ---
 
