@@ -128,7 +128,7 @@ I learned how React Native could be applied to create the features we wanted, an
 
 ## Conclusion  
 - **Project Success**: We achieved our goal of building a working Job Listing app with login, profile editing, job search, and saved jobs.  
-- **Largest Victory**: Saved jobs persisted per user and worked across restarts.  
+- **Largest Victory**: Our biggest victory was achieving saved jobs persistence unique to each user and integrating job search smoothly, while also getting the register and login functionality working properly. In addition, we successfully implemented the API so that it populated the dropdown menu with categories, which then fed directly into the jobs page to display results for the user. 
 - **Challenges**: GitHub collaboration was tricky at first (merge conflicts, PR reviews) but improved our workflow skills.  
 - **Final Assessment**: The project was successful, and we gained valuable experience in teamwork, GitHub workflow, and full-stack development.  
 
