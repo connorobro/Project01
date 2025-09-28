@@ -125,20 +125,45 @@ export default function Login() {
     </KeyboardAvoidingView>
   );
 }
+// const styles = StyleSheet.create({
+//   container: {
+//     flex: 1,
+//     backgroundColor: "#FFFFFF",
+//   },
+//   scrollContent: {
+//     flexGrow: 1,
+//     justifyContent: "center",
+//   },
+//   formContainer: {
+//     padding: 20,
+//     margin: 20,
+//     backgroundColor: "#003459",
+//     borderRadius: 10,
+//   },
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "#003459", // This is your --navy color
   },
   scrollContent: {
     flexGrow: 1,
     justifyContent: "center",
+    backgroundColor: "#00171F", // This is your --dark-navy color
   },
   formContainer: {
     padding: 20,
     margin: 20,
-    backgroundColor: "#003459",
+    backgroundColor: "rgba(0, 52, 89, 0.9)", // Semi-transparent navy
     borderRadius: 10,
+    // Add some shadow for depth
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
   title: {
     fontSize: 24,

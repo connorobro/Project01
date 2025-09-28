@@ -13,9 +13,16 @@
   padding: 100px 20px 40px;
   gap: 40px;
 }
-.title{
-    text-align: center;
-    color: white;
+.title {
+  text-align: center;
+  color: white;
+  font-size: 48px; /* Made even bigger */
+  font-weight: 800;
+  margin: 0; /* Remove default margin */
+  padding: 0; /* Remove default padding */
+  width: 100%; /* Ensure full width for centering */
+  display: block; /* Ensure block display */
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); /* Add text shadow for better visibility */
 }
 .index-button {
   background: linear-gradient(135deg, var(--light-blue), var(--blue));

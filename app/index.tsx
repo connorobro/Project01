@@ -16,8 +16,8 @@ export default function Index() {
 
   return (
     <div className="page-container">
-      <h1 className="title">Job Listing</h1>
       <main className="center-container">
+        <h1 className="title">Job Listing</h1>
         <Link className="index-button" href={"./Login"} style={styles.button}>
           Login
         </Link>

@@ -10,13 +10,18 @@ export default function RootLayout() {
       <SavedJobsProvider>
         <AuthGate>
           <Stack>
-            <Stack.Screen name="index" options={{ headerTitle: "Index" }} />
-            <Stack.Screen 
-              name="Home" />
+            <Stack.Screen name="index" options={{ headerTitle: "Welcome" }} />
+            <Stack.Screen name="Home" />
             <Stack.Screen name="jobs" options={{ headerTitle: "Jobs" }} />
-            <Stack.Screen name="savedJobs" options={{ headerTitle: "Saved Jobs" }} />
+            <Stack.Screen
+              name="savedJobs"
+              options={{ headerTitle: "Saved Jobs" }}
+            />
             <Stack.Screen name="Login" options={{ headerTitle: "Login" }} />
-            <Stack.Screen name="Register" options={{ headerTitle: "Register" }} />
+            <Stack.Screen
+              name="Register"
+              options={{ headerTitle: "Register" }}
+            />
             <Stack.Screen name="debug" options={{ headerTitle: "Debug" }} />
           </Stack>
         </AuthGate>
@@ -37,6 +42,8 @@ function AuthGate({ children }: { children: React.ReactNode }) {
   console.log("AuthGate - userToken:", !!userToken);
   console.log("AuthGate - isLoading:", isLoading);
 
+  const shouldRedirect =
+    !isLoading && !publicSegments.includes(seg) && !userToken;
   // Wait for loading to complete before making redirect decisions
   if (isLoading) {
     console.log("AuthGate - Still loading, showing children");
