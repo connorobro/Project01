@@ -44,7 +44,7 @@ I was able to get a few test cases to work by installing the correct dependencie
 Following the React Native Expo documentation, I then used them in my API URL as: https://api.adzuna.com/v1/api/jobs/us/categories?app_id=${process.env.EXPO_PUBLIC_ADZUNA_APP_ID}&app_key=${process.env.EXPO_PUBLIC_ADZUNA_API_KEY}
 
 **Favorite Part**  
-I enjoyed making the buttons, writing the code to make them functional, and building the overall layout. I also liked figuring out how to implement the API and creating the user profile page, where I debugged and tested different ideas—such as when to allow users to edit, and how to handle password and username changes.
+I enjoyed making the buttons, writing the code to make them functional, and building the overall layout. I also liked figuring out how to implement the API and creating the user profile page, where I debugged and tested different ideas such as when to allow users to edit, and how to handle password and username changes.
 
 **Redo**  
 If I could redo something, I would improve the testing to make it more robust. I would include more cases, such as checking edge cases in functions and ensuring proper element rendering.
