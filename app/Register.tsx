@@ -11,6 +11,8 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import "react-native-get-random-values";
+import { v4 as uuidv4 } from "uuid";
 import { AuthContext } from "../context/AuthProvider";
 
 export default function Register() {
@@ -54,7 +56,7 @@ export default function Register() {
       }
 
       const newUser = {
-        id: Date.now().toString(),
+        id: uuidv4(),
         username,
         password,
         createdAt: new Date().toISOString(),
@@ -69,8 +71,7 @@ export default function Register() {
       await AsyncStorage.setItem("isLoggedIn", "true");
 
       // tells AuthContext who is logged in right away (so SavedJobs can key by user)
-      await login("someTokenValue", newUser.username, newUser.password);
-
+      await login("someTokenValue", newUser.id, newUser.username, newUser.password);
       setFeedback("Account created successfully! Redirecting...");
 
       setTimeout(() => {

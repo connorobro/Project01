@@ -4,13 +4,15 @@ import React, { createContext, ReactNode, useState } from "react";
 
 type AuthContextType = {
   userToken: string | null;
-  login: (token: string, username: string, password: string) => Promise<void>;
+  login: (token: string, userId: string, username: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   register: (
     token: string,
+    userId: string,
     username: string,
     password: string
   ) => Promise<void>;
+  userId: string | null;
   username: string | null;
   password: string | null;
   isLoading: boolean;
@@ -18,6 +20,7 @@ type AuthContextType = {
 
 export const AuthContext = createContext<AuthContextType>({
   userToken: null,
+  userId: null,
   username: null,
   password: null,
   login: async () => {},
@@ -32,6 +35,7 @@ type AuthProviderProps = {
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [userToken, setUserToken] = useState<string | null>(null);
+  const [userId, setUserId] = useState<string | null>(null);
   const [username, setUsername] = useState<string | null>(null);
   const [password, setPassword] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -39,9 +43,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   React.useEffect(() => {
     const loadUserData = async () => {
       const token = await AsyncStorage.getItem("userToken");
+      const uid = await AsyncStorage.getItem("userId");
       const username = await AsyncStorage.getItem("username");
       const password = await AsyncStorage.getItem("password");
       setUserToken(token);
+      setUserId(uid);
       setUsername(username);
       setPassword(password);
       setIsLoading(false);
@@ -49,34 +55,35 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     loadUserData();
   }, []);
 
-  const login = async (token: string, username: string, password: string) => {
+  const login = async (token: string, userId: string, username: string, password: string) => {
     await AsyncStorage.setItem("userToken", token);
+    await AsyncStorage.setItem("userId", userId);
     await AsyncStorage.setItem("username", username);
     await AsyncStorage.setItem("password", password);
     setUserToken(token);
+    setUserId(userId);
     setUsername(username);
     setPassword(password);
     setIsLoading(false);
   };
 
-  const register = async (
-    token: string,
-    username: string,
-    password: string
-  ) => {
-    await AsyncStorage.setItem("userToken", token);
-    await AsyncStorage.setItem("username", username);
-    await AsyncStorage.setItem("password", password);
-    setUserToken(token);
-    setUsername(username);
-    setPassword(password);
-    setIsLoading(false);
-  };
+  const register = async (token: string, userId: string, username: string, password: string) => {
+     await AsyncStorage.setItem("userToken", token);
+     await AsyncStorage.setItem("userId", userId);
+     await AsyncStorage.setItem("username", username);
+     await AsyncStorage.setItem("password", password);
+     setUserToken(token);
+     setUserId(userId);
+     setUsername(username);
+     setPassword(password);
+     setIsLoading(false);
+   };
 
   const logout = async () => {
     console.log("Logout started - clearing storage and redirecting to /");
     // Clear storage first
     await AsyncStorage.removeItem("userToken");
+    await AsyncStorage.removeItem("userId");
     await AsyncStorage.removeItem("username");
     await AsyncStorage.removeItem("password");
     
@@ -98,6 +105,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     <AuthContext.Provider
       value={{
         userToken,
+        userId,
         username,
         password,
         login,
