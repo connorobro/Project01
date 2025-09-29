@@ -103,26 +103,26 @@ I learned how React Native could be applied to create the features we wanted, an
 ---
 
 ### Rene V.  
-- **Pull Requests**: *(Insert PR links)*  
+- **Pull Requests**: *[#43] https://github.com/connorobro/Project01/pull/43*  [#51] https://github.com/connorobro/Project01/pull/51 [#64]https://github.com/connorobro/Project01/pull/64
+[#67] https://github.com/connorobro/Project01/pull/67
 - **Issues**: *(Insert Issue links)*  
 
 **Role / Stories Worked On**  
-*(Fill in here)*  
+I worked on the page styling to ensure users have a smooth and enjoyable navigation experience. Throughout this task, I focused on accessibility and ease of interaction with the content. By prioritizing user experience, I designed a layout that feels simple yet effective, using well-applied colors and subtle effects to make the pages easier to navigate.  
 
 **Biggest Challenge**  
-*(Fill in here)*  
+The biggest challenge was learning the new tools and resources required for this project. Since all of the technologies used in this application were unfamiliar to me, it was difficult at first to keep up with the agile meeting deadlines. 
 
 **Resolution**  
-*(Fill in here)*  
-
+To overcome this, I dedicated extra time to exploring the tools through documentation, tutorials, and hands-on practice. I also sought guidance from teammates when needed, which helped me quickly adapt to the new environment. As a result, I became more confident using the technologies and was able to contribute effectively while meeting agile deadlines.
 **Favorite Part**  
-*(Fill in here)*  
+My favorite part of working on this project was gaining insight into how a large-scale application is developed from the ground up. I also enjoyed learning a new tool for building cross-platform applications.
 
 **Redo**  
-*(Fill in here)*  
+If I had the chance to redo this app, I would focus more on implementing only the essential tasks and spend less time on unnecessary functionalities.
 
 **Lesson Learned**  
-*(Fill in here)*  
+From this project, I learned that no matter how challenging a task may seem, starting early and breaking it down into small chunks of code leads to faster progress than overthinking the perfect solution.
 
 ---
 
