@@ -42,8 +42,7 @@ export default function Login() {
       );
       if (user) {
         // Tell AuthContext who is logged in
-        await login("someTokenValue", user.username, user.password);
-
+        await login("someTokenValue", user.id, user.username, user.password);
         await AsyncStorage.setItem("currentUser", JSON.stringify(user));
         await AsyncStorage.setItem("isLoggedIn", "true");
 

@@ -21,43 +21,51 @@ type Ctx = {
 
 const C = createContext<Ctx | null>(null);
 
-const keyFor = (identity: string | null) => `SAVED_JOBS_V3_${identity ?? "GUEST"}`;
+const keyForV4 = (userId: string | null) => `SAVED_JOBS_V4_${userId ?? "GUEST"}`;
+const keyForV3 = (username: string | null) => `SAVED_JOBS_V3_${username ?? "GUEST"}`;
 
-async function resolveIdentity(usernameFromAuth: string | null): Promise<string | null> {
-  if (usernameFromAuth) return usernameFromAuth; // preferred: from AuthProvider
-  // fallback: what Login/Register already save
+async function migrateV3toV4(userId: string | null): Promise<void> {
   try {
-    const raw = await AsyncStorage.getItem("currentUser");
-    if (raw) {
-      const u = JSON.parse(raw);
-      return String(u?.username ?? u?.id ?? "");
+    const rawCurrent = await AsyncStorage.getItem("currentUser"); // set by Register/Login
+    const parsed = rawCurrent ? JSON.parse(rawCurrent) : null;
+
+    const username = parsed?.username ?? (await AsyncStorage.getItem("username"));
+    const oldKey = keyForV3(typeof username === "string" ? username : null);
+    const newKey = keyForV4(userId);
+
+    if (!newKey) return;
+
+    const [newVal, oldVal] = await Promise.all([
+      AsyncStorage.getItem(newKey),
+      AsyncStorage.getItem(oldKey),
+    ]);
+
+    if (!newVal && oldVal) {
+      await AsyncStorage.setItem(newKey, oldVal);  
+      await AsyncStorage.removeItem(oldKey);       
     }
   } catch {}
-  return null;
 }
 
 export function SavedJobsProvider({ children }: { children: React.ReactNode }) {
-  const { username } = useAuth(); 
+  const { userId, username } = useAuth(); // userId now provided by AuthProvider
   const [identity, setIdentity] = useState<string | null>(null);
   const [saved, setSaved] = useState<SavedJob[]>([]);
   const [loadedKey, setLoadedKey] = useState<string | null>(null);
   const loadingRef = useRef(false);
 
-  // 1) Figuring out who the user is whenever auth changes
   useEffect(() => {
     let cancelled = false;
     (async () => {
-      const who = await resolveIdentity(username ?? null);
-      if (!cancelled) setIdentity(who && who.length ? who : null);
+      const id = userId ?? null;
+      if (!cancelled) setIdentity(id);
+      await migrateV3toV4(id);
     })();
-    return () => {
-      cancelled = true;
-    };
-  }, [username]);
+    return () => { cancelled = true; };
+  }, [userId, username]);
 
-  // 2) Loading the user's saved jobs on identity change/app start
   useEffect(() => {
-    const key = keyFor(identity);
+    const key = keyForV4(identity);
     let cancelled = false;
     (async () => {
       loadingRef.current = true;
@@ -71,12 +79,9 @@ export function SavedJobsProvider({ children }: { children: React.ReactNode }) {
         loadingRef.current = false;
       }
     })();
-    return () => {
-      cancelled = true;
-    };
+    return () => { cancelled = true; };
   }, [identity]);
 
-  // 3) Persisting whenever the list changes
   useEffect(() => {
     if (!loadedKey || loadingRef.current) return;
     AsyncStorage.setItem(loadedKey, JSON.stringify(saved)).catch(() => {});
